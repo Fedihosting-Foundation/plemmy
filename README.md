@@ -8,7 +8,7 @@
 
 Plemmy allows you to interact with any Lemmy instance using Python and the [LemmyHttp API](https://join-lemmy.org/api/classes/LemmyHttp.html).
 
-**WARNING:** Plemmy is still in development. Many functions of the LemmyHttp API have not yet been implemented (Soon™).
+**WARNING:** Plemmy is still in development and needs testing!
 
 ## Installation ##
 
@@ -40,10 +40,10 @@ srv = LemmyHttp("https://lemmy.ml")
 srv.login("<username_or_email>", "<password>")
 
 # make a comment
-srv.create_comment("Hello from plemmy!", <post_id>)
+srv.create_comment("Hello from plemmy!", post_id)
 
 # create a post
-srv.create_post(<community_id>, "New post's title", body="Body text", url="https://a.link.to.share")
+srv.create_post(community_id, "New post's title", body="Body text", url="https://a.link.to.share")
 ```
 
 Full documentation is on its way, but in the meantime check out our source code.
