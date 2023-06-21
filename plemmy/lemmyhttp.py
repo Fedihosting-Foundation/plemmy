@@ -38,7 +38,8 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def approve_registration_application(
-     self, approve: bool, id: int, deny_reason: str = "") -> requests.Response:
+            self, approve: bool, id: int, deny_reason: str = None
+    ) -> requests.Response:
 
         form = {
             "approve": approve,
@@ -52,8 +53,8 @@ class LemmyHttp(object):
         )
 
     def ban_from_community(self, ban: bool, community_id: int, person_id: int,
-                           expires: int = -1, reason: str = "",
-                           remove_data: bool = True) -> requests.Response:
+                           expires: int = None, reason: str = None,
+                           remove_data: bool = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -68,8 +69,8 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def ban_person(self, ban: bool, person_id: int,
-                   expires: int = -1, reason: str = "",
-                   remove_data: bool = True) -> requests.Response:
+                   expires: int = None, reason: str = None,
+                   remove_data: bool = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -114,8 +115,8 @@ class LemmyHttp(object):
                            self._headers, form)
 
     def create_comment(self, content: str, post_id: int,
-                       form_id: str = "", language_id: int = -1,
-                       parent_id: int = -1) -> requests.Response:
+                       form_id: str = None, language_id: int = None,
+                       parent_id: int = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -139,10 +140,10 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def create_community(self, name: str, title: str,
-                         banner: str = "", description: str = "",
-                         discussion_languages: List[int] = [],
-                         icon: str = "", nsfw: bool = False,
-                         posting_redirect_to_mods: bool = False
+                         banner: str = None, description: str = None,
+                         discussion_languages: List[int] = None,
+                         icon: str = None, nsfw: bool = None,
+                         posting_redirect_to_mods: bool = None
                          ) -> requests.Response:
 
         form = {
@@ -158,9 +159,9 @@ class LemmyHttp(object):
         }
         return post_handler(f"{self._api_url}/community", self._headers, form)
 
-    def create_post(self, community_id: int, name: str, body: str = "",
-                    honeypot: str = "", language_id: int = -1,
-                    nsfw: bool = False, url: str = "") -> requests.Response:
+    def create_post(self, community_id: int, name: str, body: str = None,
+                    honeypot: str = None, language_id: int = None,
+                    nsfw: bool = None, url: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -207,41 +208,41 @@ class LemmyHttp(object):
         return post_handler(f"{self._api_url}/private_message_report",
                             self._headers, form)
 
-    def create_site(self, name: str, actor_name_max_length: int = -1,
-                    allowed_instances: List[str] = [],
-                    application_email_admins: bool = False,
-                    application_question: str = "", banner: str = "",
-                    blocked_instances: List[str] = [],
-                    captcha_difficulty: str = "",
-                    captcha_enabled: bool = False,
-                    community_creation_admin_only: bool = False,
-                    default_post_listing_type: str = "",
-                    default_theme: str = "", description: str = "",
-                    discussion_languages: List[int] = [],
-                    enable_downvotes: bool = True, enable_nsfw: bool = False,
-                    federation_debug: bool = False,
-                    federation_enabled: bool = True,
-                    federation_worker_count: int = -1,
-                    hide_modlog_mod_names: bool = False, icon: str = "",
-                    legal_information: str = "",
-                    private_instance: bool = False,
-                    rate_limit_comment: int = -1,
-                    rate_limit_comment_per_second: int = -1,
-                    rate_limit_image: int = -1,
-                    rate_limit_image_per_second: int = -1,
-                    rate_limit_message: int = -1,
-                    rate_limit_message_per_second: int = -1,
-                    rate_limit_post: int = -1,
-                    rate_limit_post_per_second: int = -1,
-                    rate_limit_register: int = -1,
-                    rate_limit_register_per_second: int = -1,
-                    rate_limit_search: int = -1,
-                    rate_limit_search_per_second: int = -1,
-                    registration_mode: str = "open",
-                    reports_email_admins: bool = False,
-                    require_email_verification: bool = False,
-                    sidebar: str = "", slur_filter_regex: str = "",
-                    taglines: List[str] = []) -> requests.Response:
+    def create_site(self, name: str, actor_name_max_length: int = None,
+                    allowed_instances: List[str] = None,
+                    application_email_admins: bool = None,
+                    application_question: str = None, banner: str = None,
+                    blocked_instances: List[str] = None,
+                    captcha_difficulty: str = None,
+                    captcha_enabled: bool = None,
+                    community_creation_admin_only: bool = None,
+                    default_post_listing_type: str = None,
+                    default_theme: str = None, description: str = None,
+                    discussion_languages: List[int] = None,
+                    enable_downvotes: bool = None, enable_nsfw: bool = None,
+                    federation_debug: bool = None,
+                    federation_enabled: bool = None,
+                    federation_worker_count: int = None,
+                    hide_modlog_mod_names: bool = None, icon: str = None,
+                    legal_information: str = None,
+                    private_instance: bool = None,
+                    rate_limit_comment: int = None,
+                    rate_limit_comment_per_second: int = None,
+                    rate_limit_image: int = None,
+                    rate_limit_image_per_second: int = None,
+                    rate_limit_message: int = None,
+                    rate_limit_message_per_second: int = None,
+                    rate_limit_post: int = None,
+                    rate_limit_post_per_second: int = None,
+                    rate_limit_register: int = None,
+                    rate_limit_register_per_second: int = None,
+                    rate_limit_search: int = None,
+                    rate_limit_search_per_second: int = None,
+                    registration_mode: str = None,
+                    reports_email_admins: bool = None,
+                    require_email_verification: bool = None,
+                    sidebar: str = None, slur_filter_regex: str = None,
+                    taglines: List[str] = None) -> requests.Response:
 
         form = {
             "actor_name_max_length": actor_name_max_length,
@@ -341,9 +342,9 @@ class LemmyHttp(object):
         return post_handler(f"{self._api_url}/private_message/delete",
                             self._headers, form)
 
-    def edit_comment(self, comment_id: int, content: str = "",
-                     distinguished: bool = False, form_id: str = "",
-                     language_id: int = -1) -> requests.Response:
+    def edit_comment(self, comment_id: int, content: str = None,
+                     distinguished: bool = None, form_id: str = None,
+                     language_id: int = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -355,12 +356,12 @@ class LemmyHttp(object):
         }
         return put_handler(f"{self._api_url}/comment", self._headers, form)
 
-    def edit_community(self, community_id: int, banner: str = "",
-                       description: str = "",
-                       discussion_languages: List[int] = [], icon: str = "",
-                       nsfw: bool = False,
-                       posting_restricted_to_mods: bool = False,
-                       title: str = "") -> requests.Response:
+    def edit_community(self, community_id: int, banner: str = None,
+                       description: str = None,
+                       discussion_languages: List[int] = None,
+                       icon: str = None, nsfw: bool = None,
+                       posting_restricted_to_mods: bool = None,
+                       title: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -375,9 +376,9 @@ class LemmyHttp(object):
         }
         return put_handler(f"{self._api_url}/post", self._headers, form)
 
-    def edit_post(self, post_id: int, body: str = "", language_id: int = -1,
-                  name: str = "", nsfw: bool = False,
-                  url: str = "") -> requests.Response:
+    def edit_post(self, post_id: int, body: str = None,
+                  language_id: int = None, name: str = None, nsfw: bool = None,
+                  url: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -401,38 +402,41 @@ class LemmyHttp(object):
         return put_handler(f"{self._api_url}/private_message",
                            self._headers, form)
 
-    def edit_site(self, actor_name_max_length: int = -1,
-                  allowed_instances: List[str] = [],
-                  application_email_admins: bool = False,
-                  application_question: str = "", banner: str = "",
-                  blocked_instances: List[str] = [],
-                  captcha_difficulty: str = "", captcha_enabled: bool = False,
-                  community_creation_admin_only: bool = False,
-                  default_post_listing_type: str = "", default_theme: str = "",
-                  description: str = "", discussion_languages: List[int] = [],
-                  enable_downvotes: bool = True, enable_nsfw: bool = False,
-                  federation_debug: bool = False,
-                  federation_enabled: bool = True,
-                  federation_worker_count: int = -1,
-                  hide_modlog_mod_names: bool = False, icon: str = "",
-                  legal_information: str = "", name: str = "",
-                  private_instance: bool = False, rate_limit_comment: int = -1,
-                  rate_limit_comment_per_second: int = -1,
-                  rate_limit_image: int = -1,
-                  rate_limit_image_per_second: int = -1,
-                  rate_limit_message: int = -1,
-                  rate_limit_message_per_second: int = -1,
-                  rate_limit_post: int = -1,
-                  rate_limit_post_per_second: int = -1,
-                  rate_limit_register: int = -1,
-                  rate_limit_register_per_second: int = -1,
-                  rate_limit_search: int = -1,
-                  rate_limit_search_per_second: int = -1,
-                  registration_mode: str = "open",
-                  reports_email_admins: bool = False,
-                  require_email_verification: bool = False, sidebar: str = "",
-                  slur_filter_regex: str = "",
-                  taglines: List[str] = []) -> requests.Response:
+    def edit_site(self, actor_name_max_length: int = None,
+                  allowed_instances: List[str] = None,
+                  application_email_admins: bool = None,
+                  application_question: str = None, banner: str = None,
+                  blocked_instances: List[str] = None,
+                  captcha_difficulty: str = None, captcha_enabled: bool = None,
+                  community_creation_admin_only: bool = None,
+                  default_post_listing_type: str = None,
+                  default_theme: str = None,
+                  description: str = None,
+                  discussion_languages: List[int] = None,
+                  enable_downvotes: bool = None, enable_nsfw: bool = None,
+                  federation_debug: bool = None,
+                  federation_enabled: bool = None,
+                  federation_worker_count: int = None,
+                  hide_modlog_mod_names: bool = None, icon: str = None,
+                  legal_information: str = None, name: str = None,
+                  private_instance: bool = None,
+                  rate_limit_comment: int = None,
+                  rate_limit_comment_per_second: int = None,
+                  rate_limit_image: int = None,
+                  rate_limit_image_per_second: int = None,
+                  rate_limit_message: int = None,
+                  rate_limit_message_per_second: int = None,
+                  rate_limit_post: int = None,
+                  rate_limit_post_per_second: int = None,
+                  rate_limit_register: int = None,
+                  rate_limit_register_per_second: int = None,
+                  rate_limit_search: int = None,
+                  rate_limit_search_per_second: int = None,
+                  registration_mode: str = None,
+                  reports_email_admins: bool = None,
+                  require_email_verification: bool = None, sidebar: str = None,
+                  slur_filter_regex: str = None,
+                  taglines: List[str] = None) -> requests.Response:
 
         form = {
             "actor_name_max_length": actor_name_max_length,
@@ -486,7 +490,7 @@ class LemmyHttp(object):
         form = {
             "auth": self.key,
             "feature_type": feature_type,
-            "featured": bool,
+            "featured": featured,
             "post_id": post_id
         }
         return post_handler(f"{self._api_url}/post/feature",
@@ -512,11 +516,12 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/user/get_captcha",
                            self._headers, {})
 
-    def get_comments(self, community_id: str = "", community_name: str = "",
-                     limit: int = -1, max_depth: int = -1, page: int = -1,
-                     parent_id: int = -1, post_id: int = -1,
-                     saved_only: bool = False, sort: str = "Hot",
-                     type_: str = "All") -> requests.Response:
+    def get_comments(self, community_id: str = None,
+                     community_name: str = None, limit: int = None,
+                     max_depth: int = None, page: int = None,
+                     parent_id: int = None, post_id: int = None,
+                     saved_only: bool = None, sort: str = None,
+                     type_: str = None) -> requests.Response:
 
         form = {
             "auth": self._api_url,
@@ -534,7 +539,8 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/comment/list",
                            self._headers, form)
 
-    def get_community(self, id: int = -1, name: str = "") -> requests.Response:
+    def get_community(self, id: int = None,
+                      name: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -543,9 +549,10 @@ class LemmyHttp(object):
         }
         return get_handler(f"{self._api_url}/community", self._headers, form)
 
-    def get_modlog(self, type_: str, community_id: int = -1, limit: int = -1,
-                   mod_person_id: int = -1, other_person_id: int = -1,
-                   page: int = -1) -> requests.Response:
+    def get_modlog(self, type_: str, community_id: int = None,
+                   limit: int = None, mod_person_id: int = None,
+                   other_person_id: int = None,
+                   page: int = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -558,10 +565,10 @@ class LemmyHttp(object):
         }
         return get_handler(f"{self._api_url}/modlog", self._headers, form)
 
-    def get_person_details(self, community_id: int = -1, limit: int = -1,
-                           page: int = -1, person_id: int = -1,
-                           saved_only: bool = False, sort: str = "Active",
-                           username: str = "") -> requests.Response:
+    def get_person_details(self, community_id: int = None, limit: int = None,
+                           page: int = None, person_id: int = None,
+                           saved_only: bool = None, sort: str = None,
+                           username: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -575,9 +582,9 @@ class LemmyHttp(object):
         }
         return get_handler(f"{self._api_url}/user", self._headers, form)
 
-    def get_person_mentions(self, limit: int = -1, page: int = -1,
-                            sort: str = "Active",
-                            unread_only: bool = False) -> requests.Response:
+    def get_person_mentions(self, limit: int = None, page: int = None,
+                            sort: str = None,
+                            unread_only: bool = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -589,8 +596,8 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/user/mention",
                            self._headers, form)
 
-    def get_post(self, comment_id: int = -1,
-                 id: int = -1) -> requests.Response:
+    def get_post(self, comment_id: int = None,
+                 id: int = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -599,10 +606,10 @@ class LemmyHttp(object):
         }
         return get_handler(f"{self._api_url}/post", self._headers, form)
 
-    def get_posts(self, community_id: int = -1, community_name: str = "",
-                  limit: int = -1, page: int = -1, saved_only: bool = False,
-                  sort: str = "Active",
-                  type_: str = "All") -> requests.Response:
+    def get_posts(self, community_id: int = None, community_name: str = None,
+                  limit: int = None, page: int = None, saved_only: bool = None,
+                  sort: str = None,
+                  type_: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -616,8 +623,8 @@ class LemmyHttp(object):
         }
         return get_handler(f"{self._api_url}/post/list", self._headers, form)
 
-    def get_private_messages(self, limit: int = -1, page: int = -1,
-                             unread_only: bool = False) -> requests.Response:
+    def get_private_messages(self, limit: int = None, page: int = None,
+                             unread_only: bool = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -628,8 +635,9 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/private_message/list",
                            self._headers, form)
 
-    def get_replies(self, limit: int = -1, page: int = -1, sort: str = "New",
-                    unread_only: bool = False) -> requests.Response:
+    def get_replies(self, limit: int = None, page: int = None,
+                    sort: str = None,
+                    unread_only: bool = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -641,7 +649,7 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/user/replies",
                            self._headers, form)
 
-    def get_report_count(self, community_id: int = -1) -> requests.Response:
+    def get_report_count(self, community_id: int = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -700,8 +708,8 @@ class LemmyHttp(object):
         }
         return post_handler(f"{self._api_url}/post/like", self._headers, form)
 
-    def list_comment_reports(self, community_id: int = -1, limit: int = -1,
-                             page: int = -1, unresolved_only: bool = False
+    def list_comment_reports(self, community_id: int = None, limit: int = None,
+                             page: int = None, unresolved_only: bool = None
                              ) -> requests.Response:
 
         form = {
@@ -714,9 +722,9 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/comment/report/list",
                            self._headers, form)
 
-    def list_communities(self, limit: int = -1, page: int = -1,
-                         sort: str = "Active",
-                         type_: str = "All") -> requests.Response:
+    def list_communities(self, limit: int = None, page: int = None,
+                         sort: str = None,
+                         type_: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -728,8 +736,8 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/community/list",
                            self._headers, form)
 
-    def list_post_reports(self, community_id: int = -1, limit: int = -1,
-                          page: int = -1, unresolved_only: bool = False
+    def list_post_reports(self, community_id: int = None, limit: int = None,
+                          page: int = None, unresolved_only: bool = None
                           ) -> requests.Response:
 
         form = {
@@ -742,8 +750,8 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/post/report/list",
                            self._headers, form)
 
-    def list_private_message_reports(self, limit: int = -1, page: int = -1,
-                                     unresolved_only: bool = False
+    def list_private_message_reports(self, limit: int = None, page: int = None,
+                                     unresolved_only: bool = None
                                      ) -> requests.Response:
 
         form = {
@@ -755,8 +763,9 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/private_message/report/list",
                            self._headers, form)
 
-    def list_registration_applications(self, limit: int = -1, page: int = -1,
-                                       unread_only: bool = False
+    def list_registration_applications(self, limit: int = None,
+                                       page: int = None,
+                                       unread_only: bool = None
                                        ) -> requests.Response:
 
         form = {
@@ -857,7 +866,7 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def purge_comment(self, comment_id: int,
-                      reason: str = "") -> requests.Response:
+                      reason: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -868,7 +877,7 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def purge_community(self, community_id: int,
-                        reason: str = "") -> requests.Response:
+                        reason: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -879,7 +888,7 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def purge_person(self, person_id: int,
-                     reason: str = "") -> requests.Response:
+                     reason: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -889,7 +898,8 @@ class LemmyHttp(object):
         return post_handler(f"{self._api_url}/admin/purge/person",
                             self._headers, form)
 
-    def purge_post(self, post_id: int, reason: str = "") -> requests.Response:
+    def purge_post(self, post_id: int,
+                   reason: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -900,9 +910,9 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def register(self, password: str, password_verify: str, show_nsfw: bool,
-                 username: str, answer: str = "", captcha_answer: str = "",
-                 captcha_uuid: str = "", email: str = "",
-                 honeypot: str = "") -> requests.Response:
+                 username: str, answer: str = None, captcha_answer: str = None,
+                 captcha_uuid: str = None, email: str = None,
+                 honeypot: str = None) -> requests.Response:
 
         form = {
             "answer": answer,
@@ -919,7 +929,7 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def remove_comment(self, comment_id: int, removed: bool,
-                       reason: str = "") -> requests.Response:
+                       reason: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -931,8 +941,8 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def remove_community(self, community_id: int, removed: bool,
-                         expires: int = -1,
-                         reason: str = "") -> requests.Response:
+                         expires: int = None,
+                         reason: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -945,7 +955,7 @@ class LemmyHttp(object):
                             self._headers, form)
 
     def remove_post(self, post_id: int, removed: bool,
-                    reason: str = "") -> requests.Response:
+                    reason: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -1017,22 +1027,22 @@ class LemmyHttp(object):
         }
         return put_handler(f"{self._api_url}/post/save", self._headers, form)
 
-    def save_user_settings(self, avatar: str = "", banner: str = "",
-                           bio: str = "", bot_account: bool = False,
-                           default_listing_type: str = "All",
-                           default_sort_type: str = "Active",
-                           discussion_languages: List[int] = [],
-                           display_name: str = "", email: str = "",
-                           interface_language: str = "",
-                           matrix_user_id: str = "",
-                           send_notifications_to_email: bool = False,
-                           show_avatars: bool = False,
-                           show_bot_accounts: bool = False,
-                           show_new_post_notifs: bool = False,
-                           show_nsfw: bool = False,
-                           show_read_posts: bool = True,
-                           show_scores: bool = True,
-                           theme: str = "") -> requests.Response:
+    def save_user_settings(self, avatar: str = None, banner: str = None,
+                           bio: str = None, bot_account: bool = None,
+                           default_listing_type: str = None,
+                           default_sort_type: str = None,
+                           discussion_languages: List[int] = None,
+                           display_name: str = None, email: str = None,
+                           interface_language: str = None,
+                           matrix_user_id: str = None,
+                           send_notifications_to_email: bool = None,
+                           show_avatars: bool = None,
+                           show_bot_accounts: bool = None,
+                           show_new_post_notifs: bool = None,
+                           show_nsfw: bool = None,
+                           show_read_posts: bool = None,
+                           show_scores: bool = None,
+                           theme: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
@@ -1059,10 +1069,10 @@ class LemmyHttp(object):
         return put_handler(f"{self._api_url}/user/save_user_settings",
                            self._headers, form)
 
-    def search(self, q: str, community_id: str = "", community_name: str = "",
-               creator_id: int = -1, limit: int = -1,
-               listing_type: str = "All", page: int = -1, sort: str = "Active",
-               type_: str = "All") -> requests.Response:
+    def search(self, q: str, community_id: str = None,
+               community_name: str = None, creator_id: int = None,
+               limit: int = None, listing_type: str = None, page: int = None,
+               sort: str = None, type_: str = None) -> requests.Response:
 
         form = {
             "auth": self.key,
