@@ -28,7 +28,8 @@ def put_handler(url: str, headers: dict, json: dict) -> requests.Response:
     return re
 
 
-def get_handler(url: str, headers: dict, json: dict, params: dict = None) -> requests.Response:
+def get_handler(url: str, headers: dict, json: dict,
+                params: dict = None) -> requests.Response:
 
     logger = logging.getLogger(__name__)
     try:

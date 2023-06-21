@@ -335,7 +335,8 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/community", self._headers, json=None, params=form)
+        return get_handler(f"{self._api_url}/community", self._headers,
+                           None, params=form)
 
     def get_modlog(self, type_: str, community_id: int = None,
                    limit: int = None, mod_person_id: int = None,
