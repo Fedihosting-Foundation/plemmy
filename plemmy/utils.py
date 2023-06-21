@@ -28,11 +28,11 @@ def put_handler(url: str, headers: dict, json: dict) -> requests.Response:
     return re
 
 
-def get_handler(url: str, headers: dict, json: dict) -> requests.Response:
+def get_handler(url: str, headers: dict, json: dict, params: dict = None) -> requests.Response:
 
     logger = logging.getLogger(__name__)
     try:
-        re = requests.get(url, headers=headers, json=json)
+        re = requests.get(url, headers=headers, json=json, params=params)
         logger.debug(f"Code: {re.status_code}")
     except requests.exceptions.RequestException as ex:
         logger.error(f"GET error: {ex}\n\nURL: {url}" +
