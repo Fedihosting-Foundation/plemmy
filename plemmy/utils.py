@@ -39,3 +39,9 @@ def get_handler(url: str, headers: dict, json: dict) -> requests.Response:
                      f"\nheaders: {headers}\njson: {json}")
         return None
     return re
+
+
+def create_form(arguments: dict) -> dict:
+
+    return {k: v for k, v in arguments.items()
+            if v is not None and k != "self"}
