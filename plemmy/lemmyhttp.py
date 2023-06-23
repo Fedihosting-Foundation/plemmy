@@ -242,6 +242,27 @@ class LemmyHttp(object):
         form["auth"] = self.key
         return post_handler(f"{self._api_url}/community", self._headers, form)
 
+    def create_custom_emoji(self, alt_text: str, category: str,
+                            image_url: str, keywords: List[str],
+                            shortcode: str) -> requests.Response:
+        """ create_custom_emoji: create custom emoji for site
+
+        Args:
+            alt_text (str): emoji alt text
+            category (str): emoji category
+            image_url (str): image src for emoji
+            keywords (List[str]): keywords/tags for emoji
+            shortcode (str): emoji shortcode
+
+        Returns:
+            requests.Response: result of API call
+        """
+
+        form = create_form(locals())
+        form["auth"] = self.key
+        return post_handler(f"{self._api_url}/custom_emoji",
+                            self._headers, form)
+
     def create_post(self, community_id: int, name: str, body: str = None,
                     honeypot: str = None, language_id: int = None,
                     nsfw: bool = None, url: str = None) -> requests.Response:
@@ -474,6 +495,20 @@ class LemmyHttp(object):
         return post_handler(f"{self._api_url}/community/delete",
                             self._headers, form)
 
+    def delete_custom_emoji(self, id: int) -> requests.Response:
+        """ delete_custom_emoji: delete a site emoji
+
+        Args:
+            id (int): emoji ID
+
+        Returns:
+            requests.Response: result of API call
+        """
+
+        form = {"id": id, "auth": self.key}
+        return post_handler(f"{self._api_url}/custom_emoji/delete",
+                            self._headers, form)
+
     def delete_post(self, deleted: bool, post_id: int) -> requests.Response:
         """ delete_post: delete a post
 
@@ -507,16 +542,31 @@ class LemmyHttp(object):
         return post_handler(f"{self._api_url}/private_message/delete",
                             self._headers, form)
 
+    def distinguish_comment(self, comment_id: int,
+                            distinguished: bool) -> requests.Response:
+        """ distinguish_comment: distinguish/highlight a comment
+
+        Args:
+            comment_id (int): ID of comment
+            distinguished (bool): True if distinguished, False otherwise
+
+        Returns:
+            requests.Response: result of API call
+        """
+
+        form = create_form(locals())
+        form["auth"] = self.key
+        return post_handler(f"{self._api_url}/comment/distinguish",
+                            self._headers, form)
+
     def edit_comment(self, comment_id: int, content: str = None,
-                     distinguished: bool = None, form_id: str = None,
-                     language_id: int = None) -> requests.Response:
+                     form_id: str = None, language_id: int = None
+                     ) -> requests.Response:
         """ edit_comment: edit a comment
 
         Args:
             comment_id (int): ID of comment to edit
             content (str): updated/edited content (optional)
-            distinguished (bool): True if distinguished comment, False
-                otherwise (optional)
             form_id (str): front end ID (optional)
             language_id (int): language of the comment (optional)
 
@@ -555,6 +605,26 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return put_handler(f"{self._api_url}/post", self._headers, form)
+
+    def edit_custom_emoji(self, alt_text: str, category: str, id: int,
+                          image_url: str, keywords: List[str]
+                          ) -> requests.Response:
+        """ edit_custom_emoji: edits information for custom emoji
+
+        Args:
+            alt_text (str): emoji alt text
+            category (str): emoji category
+            id (int): ID of emoji
+            image_url (str): source image for emoji
+            keywords (List[str]): keywords/tags for emoji
+
+        Returns:
+            requests.Response: result of API call
+        """
+
+        form = create_form(locals())
+        form["auth"] = self.key
+        return put_handler(f"{self._api_url}/custom_emoji")
 
     def edit_post(self, post_id: int, body: str = None,
                   language_id: int = None, name: str = None, nsfw: bool = None,
@@ -764,6 +834,19 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/user/get_captcha",
                            self._headers, {})
 
+    def get_comment(self, id: int) -> requests.Response:
+        """ get_comment: obtain a comment by ID
+
+        Args:
+            id (int): comment ID
+
+        Returns:
+            requests.Response: result of API call
+        """
+
+        form = {"id": id, "auth": self.key}
+        return get_handler(f"{self._api_url}/comment", self._headers, form)
+
     def get_comments(self, community_id: int = None,
                      community_name: str = None, limit: int = None,
                      max_depth: int = None, page: int = None,
@@ -813,6 +896,20 @@ class LemmyHttp(object):
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/community", self._headers,
                            None, params=form)
+
+    def get_federated_instances(self) -> requests.Response:
+        """ get_federated_instances: get instances federated with this instance
+
+        Args:
+            None
+
+        Returns:
+            requests.Response: result of API call
+        """
+
+        form = {"auth": self.key}
+        return get_handler(f"{self._api_url}/federated_instances",
+                           self._headers, form)
 
     def get_modlog(self, type_: str, community_id: int = None,
                    limit: int = None, mod_person_id: int = None,
@@ -1312,9 +1409,9 @@ class LemmyHttp(object):
         return post_handler(f"{self._api_url}/private_message/mark_as_read",
                             self._headers, form)
 
-    def password_change(self, password: str, password_verify: str,
-                        token: str) -> requests.Response:
-        """ password_change: password change using user token
+    def password_change_after_reset(self, password: str, password_verify: str,
+                                    token: str) -> requests.Response:
+        """ password_change_after_reset: password change using user token
 
         Args:
             password (str): new password
