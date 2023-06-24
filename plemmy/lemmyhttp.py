@@ -604,7 +604,7 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        return put_handler(f"{self._api_url}/post", self._headers, form)
+        return put_handler(f"{self._api_url}/community", self._headers, form)
 
     def edit_custom_emoji(self, alt_text: str, category: str, id: int,
                           image_url: str, keywords: List[str]
