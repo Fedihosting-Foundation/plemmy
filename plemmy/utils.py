@@ -64,7 +64,8 @@ def get_handler(url: str, headers: dict, json: dict,
 
     logger = logging.getLogger(__name__)
     try:
-        re = requests.get(url, headers=headers, json=json, params=params, timeout=30)
+        re = requests.get(url, headers=headers, json=json, params=params,
+                          timeout=30)
         logger.debug(f"Code: {re.status_code}")
     except requests.exceptions.RequestException as ex:
         logger.error(f"GET error: {ex}\n\nURL: {url}" +
