@@ -819,7 +819,8 @@ class LemmyHttp(object):
         """
 
         form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/user/banned", self._headers, form)
+        return get_handler(f"{self._api_url}/user/banned", self._headers,
+                           None, params=form)
 
     def get_captcha(self) -> requests.Response:
         """ get_captcha: get captcha for current user
@@ -832,7 +833,7 @@ class LemmyHttp(object):
         """
 
         return get_handler(f"{self._api_url}/user/get_captcha",
-                           self._headers, {})
+                           self._headers, None, None)
 
     def get_comment(self, id: int) -> requests.Response:
         """ get_comment: obtain a comment by ID
@@ -845,7 +846,8 @@ class LemmyHttp(object):
         """
 
         form = {"id": id, "auth": self.key}
-        return get_handler(f"{self._api_url}/comment", self._headers, form)
+        return get_handler(f"{self._api_url}/comment", self._headers,
+                           None, params=form)
 
     def get_comments(self, community_id: int = None,
                      community_name: str = None, limit: int = None,
@@ -878,7 +880,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/comment/list",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def get_community(self, id: int = None,
                       name: str = None) -> requests.Response:
@@ -909,7 +911,7 @@ class LemmyHttp(object):
 
         form = {"auth": self.key}
         return get_handler(f"{self._api_url}/federated_instances",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def get_modlog(self, type_: str, community_id: int = None,
                    limit: int = None, mod_person_id: int = None,
@@ -937,7 +939,8 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/modlog", self._headers, form)
+        return get_handler(f"{self._api_url}/modlog", self._headers,
+                           None, params=form)
 
     def get_person_details(self, community_id: int = None, limit: int = None,
                            page: int = None, person_id: int = None,
@@ -963,7 +966,8 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/user", self._headers, form)
+        return get_handler(f"{self._api_url}/user", self._headers,
+                           None, params=form)
 
     def get_person_mentions(self, limit: int = None, page: int = None,
                             sort: str = None,
@@ -985,7 +989,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/user/mention",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def get_post(self, comment_id: int = None,
                  id: int = None) -> requests.Response:
@@ -1001,7 +1005,8 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/post", self._headers, form)
+        return get_handler(f"{self._api_url}/post", self._headers,
+                           None, params=form)
 
     def get_posts(self, community_id: int = None, community_name: str = None,
                   limit: int = None, page: int = None, saved_only: bool = None,
@@ -1027,7 +1032,8 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/post/list", self._headers, form)
+        return get_handler(f"{self._api_url}/post/list", self._headers,
+                           None, params=form)
 
     def get_private_messages(self, limit: int = None, page: int = None,
                              unread_only: bool = None) -> requests.Response:
@@ -1046,7 +1052,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/private_message/list",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def get_replies(self, limit: int = None, page: int = None,
                     sort: str = None,
@@ -1067,7 +1073,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/user/replies",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def get_report_count(self, community_id: int = None) -> requests.Response:
         """ get_report_count: number of reports
@@ -1082,7 +1088,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/user/report_count",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def get_site(self) -> requests.Response:
         """ get_site: return site info
@@ -1095,7 +1101,8 @@ class LemmyHttp(object):
         """
 
         form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/site", self._headers, form)
+        return get_handler(f"{self._api_url}/site", self._headers,
+                           None, params=form)
 
     def get_site_metadata(self, url: str) -> requests.Response:
         """ get_site_metadata: return an instance's metadata
@@ -1109,7 +1116,7 @@ class LemmyHttp(object):
 
         form = {"url": url}
         return get_handler(f"{self._api_url}/post/site_metadata",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def get_unread_count(self) -> requests.Response:
         """ get_unread_count: get number of unread notifications
@@ -1123,7 +1130,7 @@ class LemmyHttp(object):
 
         form = {"auth": self.key}
         return get_handler(f"{self._api_url}/user/unread_count",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def get_unread_registration_application_count(self) -> requests.Response:
         """ get_unread_registration_application_count: number of unread
@@ -1139,7 +1146,7 @@ class LemmyHttp(object):
         form = {"auth": self.key}
         return get_handler(
             f"{self._api_url}/admin/registration_application/count",
-            self._headers, form
+            self._headers, None, params=form
         )
 
     def leave_admin(self) -> requests.Response:
@@ -1206,7 +1213,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/comment/report/list",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def list_communities(self, limit: int = None, page: int = None,
                          sort: str = None,
@@ -1228,7 +1235,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/community/list",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def list_post_reports(self, community_id: int = None, limit: int = None,
                           page: int = None, unresolved_only: bool = None
@@ -1249,7 +1256,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/post/report/list",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def list_private_message_reports(self, limit: int = None, page: int = None,
                                      unresolved_only: bool = None
@@ -1270,7 +1277,7 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/private_message/report/list",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def list_registration_applications(self, limit: int = None,
                                        page: int = None,
@@ -1293,7 +1300,7 @@ class LemmyHttp(object):
         form["auth"] = self.key
         return get_handler(
             f"{self._api_url}/admin/registration_application/list",
-            self._headers, form
+            self._headers, None, params=form
         )
 
     def lock_post(self, locked: bool, post_id: int) -> requests.Response:
@@ -1618,7 +1625,7 @@ class LemmyHttp(object):
 
         form = {"q": q, "auth": self.key}
         return get_handler(f"{self._api_url}/resolve_object",
-                           self._headers, form)
+                           self._headers, None, params=form)
 
     def resolve_post_report(self, report_id: int,
                             resolved: bool) -> requests.Response:
@@ -1767,7 +1774,8 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/search", self._headers, form)
+        return get_handler(f"{self._api_url}/search", self._headers,
+                           None, params=form)
 
     def transfer_community(self, community_id: int,
                            person_id: int) -> requests.Response:
