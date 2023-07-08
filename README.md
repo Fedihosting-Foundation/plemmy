@@ -74,7 +74,7 @@ print(post.name)
 print(post.body)
 ```
 
-Full documentation is on its way, but in the meantime check out our source code and some [examples](https://github.com/tjkessler/plemmy/examples).
+Full documentation is on its way, but in the meantime check out our source code and some [examples]([https://github.com/tjkessler/plemmy/examples](https://github.com/tjkessler/plemmy/tree/main/examples)).
 
 ## Reporting issues, making contributions, etc. ##
 
