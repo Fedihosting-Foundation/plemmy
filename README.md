@@ -33,20 +33,48 @@ Interact with a Lemmy instance using the _LemmyHttp_ object:
 ```python
 from plemmy import LemmyHttp
 
-# create object for Lemmy.ml
+# create object for Lemmy.ml, log in
 srv = LemmyHttp("https://lemmy.ml")
-
-# log in to Lemmy.ml
 srv.login("<username_or_email>", "<password>")
-
-# make a comment
-srv.create_comment("Hello from plemmy!", post_id)
-
-# create a post
-srv.create_post(community_id, "New post's title", body="Body text", url="https://a.link.to.share")
 ```
 
-Full documentation is on its way, but in the meantime check out our source code.
+Access specific communities:
+
+```python
+from plemmy.responses import GetComunityResponse
+
+# obtain community, parse JSON
+api_response = srv.get_community(name="Lemmy")
+response = GetCommunityResponse(api_response)
+
+# community info
+community = response.community_view.community
+print(community.name)
+print(community.actor_id)
+print(community.id)
+
+# list community moderators
+for person in response.moderators:
+    print(person.moderator.name, person.community.name)
+```
+
+Create a post:
+```python
+from plemmy.responses import PostResponse
+
+# create post, parse JSON
+api_response = srv.create_post(community.id, "Test post please ignore", "Body text")
+response = PostResponse(api_response)
+
+# post info
+post = response.post_view.post
+print(post.creator_id)
+print(post.community_id)
+print(post.name)
+print(post.body)
+```
+
+Full documentation is on its way, but in the meantime check out our source code and some [examples](https://github.com/tjkessler/plemmy/examples).
 
 ## Reporting issues, making contributions, etc. ##
 
