@@ -130,6 +130,7 @@ class Community:
     posting_restricted_to_mods: bool = None
     instance_id: int = None
     updated: str = None
+    banner: bool = None
 
 
 @dataclass
