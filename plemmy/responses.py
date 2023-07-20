@@ -261,7 +261,7 @@ class GetPostResponse(object):
         response = api_response.json()
         self.community_view = CommunityView(response["community_view"])
         self.cross_posts = [PostView(p) for p in response["cross_posts"]]
-        self.moderators = CommunityModeratorView(response["moderators"])
+        self.moderators = [CommunityModeratorView(m) for m in response["moderators"]]
         self.post_view = PostView(response["post_view"])
 
 
@@ -318,7 +318,8 @@ class GetSiteResponse(object):
         response = api_response.json()
         self.admins = [PersonView(a) for a in response["admins"]]
         self.all_languages = [Language(**lang)
-                              for lang in response["discussion_languages"]]
+                              for lang in response["all_languages"]]
+        self.discussion_languages = response["discussion_languages"]
         if "my_user" in response.keys():
             self.my_user = response["my_user"]
         else:
