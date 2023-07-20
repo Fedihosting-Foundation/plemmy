@@ -319,6 +319,7 @@ class GetSiteResponse(object):
         self.admins = [PersonView(a) for a in response["admins"]]
         self.all_languages = [Language(**lang)
                               for lang in response["all_languages"]]
+        self.discussion_languages = response["discussion_languages"]
         if "my_user" in response.keys():
             self.my_user = response["my_user"]
         else:
