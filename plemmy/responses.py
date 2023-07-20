@@ -259,9 +259,10 @@ class GetPostResponse(object):
     def __init__(self, api_response: requests.Response) -> None:
 
         response = api_response.json()
+        print(response)
         self.community_view = CommunityView(response["community_view"])
         self.cross_posts = [PostView(p) for p in response["cross_posts"]]
-        self.moderators = CommunityModeratorView(response["moderators"])
+        self.moderators = [CommunityModeratorView(m) for m in response["moderators"]]
         self.post_view = PostView(response["post_view"])
 
 
