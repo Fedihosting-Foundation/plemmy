@@ -985,7 +985,7 @@ class LemmyHttp(object):
         Returns:
             requests.Response: result of API call
         """
-
+        unread_only = str(unread_only).lower()
         form = create_form(locals())
         form["auth"] = self.key
         return get_handler(f"{self._api_url}/user/mention",
