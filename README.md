@@ -1,6 +1,6 @@
 # Plemmy: a Python package for accessing the Lemmy API
 
-<img src="img/plemmy.png" alt="drawing" width="325"/>
+<img src="https://github.com/tjkessler/plemmy/blob/main/img/plemmy.png" alt="drawing" width="325"/>
 
 [![GitHub version](https://badge.fury.io/gh/tjkessler%2Fplemmy.svg)](https://badge.fury.io/gh/tjkessler%2Fplemmy)
 [![PyPI version](https://badge.fury.io/py/plemmy.svg)](https://badge.fury.io/py/plemmy)
