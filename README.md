@@ -17,13 +17,13 @@ For the most up-to-date version of Plemmy, clone and install from the repository
 ```
 git clone https://github.com/tjkessler/plemmy
 cd plemmy
-python setup.py install
+python -m pip install .
 ```
 
-A PyPI repository is periodically updated:
+A PyPI repository is updated whenever a new version is available:
 
 ```
-pip install plemmy
+python -m pip install plemmy
 ```
 
 ## Basic usage ##
