@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["plemmy"]
+
+[project]
+name = "plemmy"
+version = "0.3.4"
+authors = [
+    { name="Travis Kessler", email="travis.j.kessler@gmail.com" },
+]
+description = "A Python package for accessing the LemmyHttp API"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests==2.31.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/tjkessler/plemmy"
+"Bug Tracker" = "https://github.com/tjkessler/plemmy/issues"
