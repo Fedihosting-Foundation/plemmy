@@ -900,12 +900,15 @@ class LemmyHttp(object):
                            None, params=form)
 
     def get_communities(self, type_: str = None, sort: str = None,
-                        page: int = None, limit: int = None) -> requests.Response:
+                        page: int = None,
+                        limit: int = None) -> requests.Response:
         """ get_communities: list all communities
 
         Args:
-            id (int): ID of community (optional)
-            name (str): name of community (optional)
+            type_ (str): "All", "Community", "Subscribed", "Local" (optional)
+            sort (str): "Hot", "New", "Old", "Top" (optional)
+            page (int): page to obtain communities from (optional)
+            limit (int): max. num. communities to obtain (optional)
 
         Returns:
             requests.Response: result of API call
