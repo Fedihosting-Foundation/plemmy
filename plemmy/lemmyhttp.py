@@ -899,6 +899,23 @@ class LemmyHttp(object):
         return get_handler(f"{self._api_url}/community", self._headers,
                            None, params=form)
 
+    def get_communities(self, type_: str = None, sort: str = None,
+                        page: int = None, limit: int = None) -> requests.Response:
+        """ get_communities: list all communities
+
+        Args:
+            id (int): ID of community (optional)
+            name (str): name of community (optional)
+
+        Returns:
+            requests.Response: result of API call
+        """
+
+        form = create_form(locals())
+        form["auth"] = self.key
+        return get_handler(f"{self._api_url}/community/list", self._headers,
+                           None, params=form)
+
     def get_federated_instances(self) -> requests.Response:
         """ get_federated_instances: get instances federated with this instance
 
