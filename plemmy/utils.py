@@ -76,7 +76,7 @@ def get_handler(url: str, headers: dict, json: dict,
 
 def create_form(arguments: dict) -> dict:
     """ create_form: creates a dictionary out of supplied arguments (derived
-    from locals()); resulting dict is in form {"arg1", arg1, ... "argN", argN}
+    from locals()); resulting dict is in form {"arg1": arg1, ... "argN": argN}
 
     Args:
         arguments (dict): function arguments supplied with locals()
@@ -85,4 +85,4 @@ def create_form(arguments: dict) -> dict:
         dict: constructed dictionary/form
     """
     return {k: v for k, v in arguments.items()
-            if v is not None and k != "self"}
+            if v is not None and k != "self" and k != "as_http"}
