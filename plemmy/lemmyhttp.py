@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 import logging
 import requests
 
@@ -808,53 +808,75 @@ class LemmyHttp(object):
         return post_handler(f"{self._api_url}/community/follow",
                             self._headers, form)
 
-    def get_banned_persons(self) -> requests.Response:
+    def get_banned_persons(self, as_http: bool = True) -> requests.Response:
         """ get_banned_persons: get a list of banned users
 
         Args:
-            None
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a list of plemmy.objects.Person objects
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, List[plemmy.objects.Person]]: result of
+                API call if as_http is True, else a list of Person objects
         """
 
         form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/user/banned", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/user/banned", self._headers,
+                               None, params=form)
+        # TODO: format list of Person objects
+        return None
 
-    def get_captcha(self) -> requests.Response:
+    def get_captcha(self, as_http: bool = True) -> requests.Response:
         """ get_captcha: get captcha for current user
 
         Args:
-            None
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a plemmy.objects.CaptchaResponse object
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, plemmy.objects.CaptchaResponse]: result of
+                API call if as_http is True, else a CaptchaResponse object
         """
 
-        return get_handler(f"{self._api_url}/user/get_captcha",
-                           self._headers, None, None)
+        if as_http:
+            return get_handler(f"{self._api_url}/user/get_captcha",
+                               self._headers, None, None)
+        # TODO: format CaptchaResponse object
+        return None
 
-    def get_comment(self, id: int) -> requests.Response:
+    def get_comment(self, id: int, as_http: bool = True) -> Union[
+                        requests.Response, "plemmy.objects.Comment"
+                    ]:
         """ get_comment: obtain a comment by ID
 
         Args:
             id (int): comment ID
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a plemmy.objects.Comment object
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, plemmy.objects.Comment]: result of API
+                call if as_http is True, else a Comment object
         """
 
         form = {"id": id, "auth": self.key}
-        return get_handler(f"{self._api_url}/comment", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/comment", self._headers,
+                               None, params=form)
+        # TODO: format Comment object
+        return None
 
     def get_comments(self, community_id: int = None,
                      community_name: str = None, limit: int = None,
                      max_depth: int = None, page: int = None,
                      parent_id: int = None, post_id: int = None,
                      saved_only: bool = None, sort: str = None,
-                     type_: str = None) -> requests.Response:
+                     type_: str = None,
+                     as_http: bool = True) -> Union[
+                         requests.Response,
+                         List["plemmy.objects.Comment"]
+                        ]:
         """ get_comments: get a list of comments
 
         Args:
@@ -872,36 +894,53 @@ class LemmyHttp(object):
                 otherwise (optional)
             sort (str): "Hot", "New", "Old", "Top" (optional)
             type_ (str): "All", "Community", "Subscribed", "Local" (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a list of plemmy.objects.Comment objects
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, List[plemmy.objects.Comment]]: result of
+                API call if as_http is True, else a list of Comment objects
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/comment/list",
-                           self._headers, None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/comment/list",
+                               self._headers, None, params=form)
+        # TODO: format list of Comment objects
+        return None
 
-    def get_community(self, id: int = None,
-                      name: str = None) -> requests.Response:
+    def get_community(self, id: int = None, name: str = None,
+                      as_http: bool = True) -> Union[
+                          requests.Response, "plemmy.objects.Community"
+                        ]:
         """ get_community: get a community
 
         Args:
             id (int): ID of community (optional)
             name (str): name of community (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a plemmy.objects.Community object
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, plemmy.objects.Community]: result of API
+                call if as_http is True, else a Community object
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/community", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/community", self._headers,
+                               None, params=form)
+        # TODO: format Community object
+        return None
 
     def get_communities(self, type_: str = None, sort: str = None,
-                        page: int = None,
-                        limit: int = None) -> requests.Response:
+                        page: int = None, limit: int = None,
+                        as_http: bool = True) -> Union[
+                            requests.Response,
+                            List["plemmy.objects.Community"]
+                        ]:
         """ get_communities: list all communities
 
         Args:
@@ -909,34 +948,47 @@ class LemmyHttp(object):
             sort (str): "Hot", "New", "Old", "Top" (optional)
             page (int): page to obtain communities from (optional)
             limit (int): max. num. communities to obtain (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a list of plemmy.objects.Community objects
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, List[plemmy.objects.Community]]: result of
+                API call if as_http is True, else a list of Community objects
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/community/list", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/community/list",
+                               self._headers, None, params=form)
+        # TODO: format list of Community objects
+        return None
 
-    def get_federated_instances(self) -> requests.Response:
+    def get_federated_instances(self, as_http: bool = True) -> Union[
+          requests.Response, List["plemmy.objects.Instance"]
+         ]:
         """ get_federated_instances: get instances federated with this instance
 
         Args:
-            None
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a list of plemmy.objects.Instance objects
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, List[plemmy.objects.Instance]]: result of
+                API call if as_http is True, else a list of Instance objects
         """
 
         form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/federated_instances",
-                           self._headers, None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/federated_instances",
+                               self._headers, None, params=form)
+        # TODO: format list of Instance objects
+        return None
 
     def get_modlog(self, type_: str, community_id: int = None,
                    limit: int = None, mod_person_id: int = None,
-                   other_person_id: int = None,
-                   page: int = None) -> requests.Response:
+                   other_person_id: int = None, page: int = None,
+                   as_http: bool = True) -> Union[requests.Response, dict]:
         """ get_modlog: obtain the moderation log
 
         Args:
@@ -952,20 +1004,49 @@ class LemmyHttp(object):
             other_person_id (int): ID of user recipient of mod
                 action (optional)
             page (int): modlog page to query (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a dictionary in form:
+                    {
+                        "admin_purge_comment":
+                            plemmy.objects.AdminPurgeComment,
+                        "admin_purge_community":
+                            plemmy.objects.AdminPurgeCommunity,
+                        "admin_purge_person": plemmy.objects.AdminPurgePerson,
+                        "admin_purge_post": plemmy.objects.AdminPurgePost,
+                        "mod_add": plemmy.objects.ModAdd,
+                        "mod_add_community": plemmy.objects.ModAddCommunity,
+                        "mod_ban": plemmy.objects.ModBan,
+                        "mod_ban_from_community":
+                            plemmy.objects.ModBanFromCommunity,
+                        "mod_feature_post": plemmy.objects.ModFeaturePost,
+                        "mod_hide_community": plemmy.objects.ModHideCommunity,
+                        "mod_lock_post": plemmy.objects.ModLockPost,
+                        "mod_remove_comment": plemmy.objects.ModRemoveComment,
+                        "mod_remove_post": plemmy.objects.ModRemovePost,
+                        "mod_transfer_community":
+                            plemmy.objects.ModTransferCommuntiy
+                    }
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, dict]: result of API call if as_http is
+                True, else a dictionary of moderator logs
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/modlog", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/modlog", self._headers,
+                               None, params=form)
+        # TODO: format dict
+        return None
 
     def get_person_details(self, community_id: int = None, limit: int = None,
                            page: int = None, person_id: int = None,
                            saved_only: bool = None, sort: str = None,
-                           username: str = None) -> requests.Response:
+                           username: str = None,
+                           as_http: bool = True) -> Union[
+                               requests.Response, "plemmy.objects.Person"
+                            ]:
         """ get_person_details: get information for a user
 
         Args:
@@ -979,19 +1060,28 @@ class LemmyHttp(object):
                 "Old", "TopAll", "TopDay", "TopMonth", "TopWeek",
                 "TopYear" (optional)
             username (str): user's username (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a plemmy.objects.Person object
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, plemmy.objects.Person]: result of API call
+                if as_http is True, else a Person object
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/user", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/user", self._headers,
+                               None, params=form)
+        # TODO: format Person object
+        return None
 
     def get_person_mentions(self, limit: int = None, page: int = None,
-                            sort: str = None,
-                            unread_only: bool = None) -> requests.Response:
+                            sort: str = None, unread_only: bool = None,
+                            as_http: bool = True) -> Union[
+                                requests.Response,
+                                List["plemmy.objects.Comment"]
+                            ]:
         """ get_person_mentions: obtain comments where current user is
         mentioned
 
@@ -1001,38 +1091,54 @@ class LemmyHttp(object):
             sort (str): "Hot", "New", "Old", "Top" (optional)
             unread_only (bool): True to obtain only unread mentions, False
                 otherwise (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a list of plemmy.objects.Comment objects
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, List[plemmy.objects.Comment]]: result of
+                API call if as_http is True, else a list of Comment objects
         """
 
         form = create_form(locals())
         form["auth"] = self.key
         form["unread_only"] = str(unread_only).lower()
-        return get_handler(f"{self._api_url}/user/mention",
-                           self._headers, None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/user/mention",
+                               self._headers, None, params=form)
+        # TODO: format list of Comment objects
+        return None
 
-    def get_post(self, comment_id: int = None,
-                 id: int = None) -> requests.Response:
+    def get_post(self, comment_id: int = None, id: int = None,
+                 as_http: bool = True) -> Union[
+                     requests.Response, "plemmy.objects.Post"
+                    ]:
         """ get_post: get post from post ID or comment ID
 
         Args:
             comment_id (int): ID of comment in post (optional)
             id (int): ID of post (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a plemmy.objects.Post object
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, plemmy.objects.Post]: result of API call
+                if as_http is True, else a Post object
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/post", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/post", self._headers,
+                               None, params=form)
+        # TODO: format Post object
+        return None
 
     def get_posts(self, community_id: int = None, community_name: str = None,
                   limit: int = None, page: int = None, saved_only: bool = None,
-                  sort: str = None,
-                  type_: str = None) -> requests.Response:
+                  sort: str = None, type_: str = None,
+                  as_http: bool = True) -> Union[
+                      requests.Response, List["plemmy.objects.Post"]
+                    ]:
         """ get_posts: obtain posts from a community
 
         Args:
@@ -1046,18 +1152,28 @@ class LemmyHttp(object):
                 "Old", "TopAll", "TopDay", "TopMonth", "TopWeek",
                 "TopYear" (optional)
             type_ (str): "All", "Community", "Local", "Subscribed" (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a list of plemmy.objects.Post objects
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, List[plemmy.objects.Post]]: result of API
+                call if as_http is True, else a list of Post objects
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/post/list", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/post/list", self._headers,
+                               None, params=form)
+        # TODO: format list of Post objects
+        return None
 
     def get_private_messages(self, limit: int = None, page: int = None,
-                             unread_only: bool = None) -> requests.Response:
+                             unread_only: bool = None,
+                             as_http: bool = True) -> Union[
+                                 requests.Response,
+                                 List["plemmy.objects.PrivateMessage"]
+                                ]:
         """ get_private_messages: get private messages
 
         Args:
@@ -1065,19 +1181,28 @@ class LemmyHttp(object):
             page (int): page of results to query (optional)
             unread_only (bool): True to only get unread messages, False
                 otherwise (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a list of plemmy.objects.PrivateMessage objects
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, List[plemmy.objects.PrivateMessage]]:
+                result of API call if as_http is True, else a list of
+                PrivateMessage objects
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/private_message/list",
-                           self._headers, None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/private_message/list",
+                               self._headers, None, params=form)
+        # TODO: format list of PrivateMessage objects
+        return None
 
     def get_replies(self, limit: int = None, page: int = None,
-                    sort: str = None,
-                    unread_only: bool = None) -> requests.Response:
+                    sort: str = None, unread_only: bool = None,
+                    as_http: bool = True) -> Union[
+                        requests.Response, List["plemmy.objects.Comment"]
+                    ]:
         """ get_replies: get replies for current user
 
         Args:
@@ -1086,89 +1211,141 @@ class LemmyHttp(object):
             sort (str): "Hot", "New", "Old", "Top" (optional)
             unread_only (bool): True to only get unread replies, False
                 otherwise (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a list of plemmy.objects.Comment objects
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, List[plemmy.objects.Comment]]: result of
+                API call if as_http is True, else a list of Comment objects
         """
 
         form = create_form(locals())
         form["auth"] = self.key
-        return get_handler(f"{self._api_url}/user/replies",
-                           self._headers, None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/user/replies",
+                               self._headers, None, params=form)
+        # TODO: format list of Comment objects
+        return None
 
-    def get_report_count(self, community_id: int = None) -> requests.Response:
+    def get_report_count(self, community_id: int = None,
+                         as_http: bool = True) -> Union[
+                             requests.Response, dict
+                            ]:
         """ get_report_count: number of reports
 
         Args:
             community_id (int): ID of community to query (optional)
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a dictionary in the form:
+                    {
+                        "comment_reports": int,
+                        "community_id": int | None,
+                        "post_reports" int,
+                        "private_message_reports": int | None
+                    }
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, dict]: result of API call if as_http is
+                True, else a dictionary with report counts
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/user/report_count",
-                           self._headers, None, params=form)
+        if as_http:
+            form["auth"] = self.key
+            return get_handler(f"{self._api_url}/user/report_count",
+                               self._headers, None, params=form)
+        # TODO: format dict
+        return None
 
-    def get_site(self) -> requests.Response:
+    def get_site(self, as_http: bool = True) -> Union[requests.Response, dict]:
         """ get_site: return site info
 
         Args:
-            None
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a dictionary in the form:
+                    {
+                        "site": plemmy.objects.Site,
+                        "site_aggregates": plemmy.objects.SiteAggregates
+                    }
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, dict]: result of API call if as_http is
+                True, else a dict
         """
 
         form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/site", self._headers,
-                           None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/site", self._headers,
+                               None, params=form)
+        # TODO: format dict
+        return None
 
-    def get_site_metadata(self, url: str) -> requests.Response:
+    def get_site_metadata(self, url: str,
+                          as_http: bool = True) -> Union[
+                              requests.Response, "plemmy.objects.SiteMetadata"
+                            ]:
         """ get_site_metadata: return an instance's metadata
 
         Args:
             url (str): Lemmy instance
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns a plemmy.objects.SiteMetadata object
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, plemmy.objects.SiteMetaData]: result of
+                API call if as_http is True, else a SiteMetadata object
         """
 
         form = {"url": url}
-        return get_handler(f"{self._api_url}/post/site_metadata",
-                           self._headers, None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/post/site_metadata",
+                               self._headers, None, params=form)
+        # TODO: format SiteMetadata object
+        return None
 
-    def get_unread_count(self) -> requests.Response:
+    def get_unread_count(self, as_http: bool = True) -> Union[
+             requests.Response, int
+            ]:
         """ get_unread_count: get number of unread notifications
 
         Args:
-            None
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns an integer
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, int]: result of API call if as_http is
+                True, else an int
         """
 
         form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/user/unread_count",
-                           self._headers, None, params=form)
+        if as_http:
+            return get_handler(f"{self._api_url}/user/unread_count",
+                               self._headers, None, params=form)
+        # TODO: format integer
+        return None
 
-    def get_unread_registration_application_count(self) -> requests.Response:
+    def get_unread_registration_application_count(
+            self, as_http: bool = True) -> Union[requests.Response, int]:
         """ get_unread_registration_application_count: number of unread
         instance applications
 
         Args:
-            None
+            as_http (bool): if True, returns requests.Response object; if
+                False, returns an integer
 
         Returns:
-            requests.Response: result of API call
+            Union[requests.Response, int]: result of API call if as_http is
+                True, else an int
         """
 
         form = {"auth": self.key}
-        return get_handler(
-            f"{self._api_url}/admin/registration_application/count",
-            self._headers, None, params=form
-        )
+        if as_http:
+            return get_handler(
+                f"{self._api_url}/admin/registration_application/count",
+                self._headers, None, params=form
+            )
+        # TODO: format integer
+        return None
 
     def leave_admin(self) -> requests.Response:
         """ leave_admin: current user leaves admin group
