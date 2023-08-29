@@ -5,18 +5,12 @@ import requests
 from .objects import CaptchaResponse, AdminPurgeComment, AdminPurgeCommunity,\
     AdminPurgePerson, AdminPurgePost, ModAdd, ModAddCommunity, ModBan,\
     ModBanFromCommunity, ModFeaturePost, ModHideCommunity, ModLockPost,\
-    ModRemoveComment, ModRemoveCommunity, ModRemovePost, ModTransferCommunity,\
+    ModRemoveComment, ModRemovePost, ModTransferCommunity,\
     SiteMetadata
 from .utils import post_handler, put_handler, get_handler, create_form
-from .views import AdminPurgeCommentView, AdminPurgeCommunityView,\
-    AdminPurgePersonView, AdminPurgePostView, CommentReplyView,\
-    CommentReportView, CommentView, CommunityModeratorView, CommunityView,\
-    FederatedInstances, ModAddCommunityView, ModAddView,\
-    ModBanFromCommunityView, ModBanView, ModFeaturePostView,\
-    ModHideCommunityView, ModLockPostView, ModRemoveCommentView,\
-    ModRemoveCommunityView, ModRemovePostView, ModTransferCommunityView,\
-    PersonMentionView, PersonView, PostReportView, PostView,\
-    PrivateMessageReportView, PrivateMessageView, SiteView
+from .views import CommentReplyView, CommentView, CommunityView,\
+    FederatedInstances, PersonMentionView, PersonView, PostView,\
+    PrivateMessageView, SiteView
 
 API_VERSION = "v3"
 
