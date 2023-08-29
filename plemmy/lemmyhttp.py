@@ -2,7 +2,21 @@ from typing import List, Union
 import logging
 import requests
 
+from .objects import CaptchaResponse, AdminPurgeComment, AdminPurgeCommunity,\
+    AdminPurgePerson, AdminPurgePost, ModAdd, ModAddCommunity, ModBan,\
+    ModBanFromCommunity, ModFeaturePost, ModHideCommunity, ModLockPost,\
+    ModRemoveComment, ModRemoveCommunity, ModRemovePost, ModTransferCommunity,\
+    SiteMetadata
 from .utils import post_handler, put_handler, get_handler, create_form
+from .views import AdminPurgeCommentView, AdminPurgeCommunityView,\
+    AdminPurgePersonView, AdminPurgePostView, CommentReplyView,\
+    CommentReportView, CommentView, CommunityModeratorView, CommunityView,\
+    FederatedInstances, ModAddCommunityView, ModAddView,\
+    ModBanFromCommunityView, ModBanView, ModFeaturePostView,\
+    ModHideCommunityView, ModLockPostView, ModRemoveCommentView,\
+    ModRemoveCommunityView, ModRemovePostView, ModTransferCommunityView,\
+    PersonMentionView, PersonView, PostReportView, PostView,\
+    PrivateMessageReportView, PrivateMessageView, SiteView
 
 API_VERSION = "v3"
 
@@ -821,11 +835,12 @@ class LemmyHttp(object):
         """
 
         form = {"auth": self.key}
-        if as_http:
-            return get_handler(f"{self._api_url}/user/banned", self._headers,
+        response = get_handler(f"{self._api_url}/user/banned", self._headers,
                                None, params=form)
-        # TODO: format list of Person objects
-        return None
+        if as_http:
+            return response
+        views = [PersonView(p) for p in response.json()["banned"]]
+        return [v.person for v in views]
 
     def get_captcha(self, as_http: bool = True) -> requests.Response:
         """ get_captcha: get captcha for current user
@@ -839,11 +854,15 @@ class LemmyHttp(object):
                 API call if as_http is True, else a CaptchaResponse object
         """
 
-        if as_http:
-            return get_handler(f"{self._api_url}/user/get_captcha",
+        response = get_handler(f"{self._api_url}/user/get_captcha",
                                self._headers, None, None)
-        # TODO: format CaptchaResponse object
-        return None
+        if as_http:
+            return response
+        response = response.json()
+        if "ok" in list(response.keys()):
+            return CaptchaResponse(**response["ok"])
+        else:
+            return None
 
     def get_comment(self, id: int, as_http: bool = True) -> Union[
                         requests.Response, "plemmy.objects.Comment"
@@ -861,11 +880,12 @@ class LemmyHttp(object):
         """
 
         form = {"id": id, "auth": self.key}
-        if as_http:
-            return get_handler(f"{self._api_url}/comment", self._headers,
+        response = get_handler(f"{self._api_url}/comment", self._headers,
                                None, params=form)
-        # TODO: format Comment object
-        return None
+        if as_http:
+            return response
+        view = CommentView(response.json())
+        return view.comment
 
     def get_comments(self, community_id: int = None,
                      community_name: str = None, limit: int = None,
@@ -904,11 +924,12 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/comment/list",
+        response = get_handler(f"{self._api_url}/comment/list",
                                self._headers, None, params=form)
-        # TODO: format list of Comment objects
-        return None
+        if as_http:
+            return response
+        views = [CommentView(c) for c in response.json()["comments"]]
+        return [v.comment for v in views]
 
     def get_community(self, id: int = None, name: str = None,
                       as_http: bool = True) -> Union[
@@ -929,11 +950,12 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/community", self._headers,
+        response = get_handler(f"{self._api_url}/community", self._headers,
                                None, params=form)
-        # TODO: format Community object
-        return None
+        if as_http:
+            return response
+        view = CommunityView(response.json())
+        return view.community
 
     def get_communities(self, type_: str = None, sort: str = None,
                         page: int = None, limit: int = None,
@@ -958,14 +980,15 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/community/list",
+        response = get_handler(f"{self._api_url}/community/list",
                                self._headers, None, params=form)
-        # TODO: format list of Community objects
-        return None
+        if as_http:
+            return response
+        views = [CommunityView(c) for c in response.json()["community_view"]]
+        return [v.community for v in views]
 
     def get_federated_instances(self, as_http: bool = True) -> Union[
-          requests.Response, List["plemmy.objects.Instance"]
+          requests.Response, dict
          ]:
         """ get_federated_instances: get instances federated with this instance
 
@@ -974,16 +997,26 @@ class LemmyHttp(object):
                 False, returns a list of plemmy.objects.Instance objects
 
         Returns:
-            Union[requests.Response, List[plemmy.objects.Instance]]: result of
-                API call if as_http is True, else a list of Instance objects
+            Union[requests.Response, dict]: result of API call if as_http is
+                True, else a dictionary in the form:
+                    {
+                        "allowed": List[plemmy.objects.Instance],
+                        "blocked": List[plemmy.objects.Instance],
+                        "linked": List[plemmy.objects.Instance]
+                    }
         """
 
         form = {"auth": self.key}
-        if as_http:
-            return get_handler(f"{self._api_url}/federated_instances",
+        response = get_handler(f"{self._api_url}/federated_instances",
                                self._headers, None, params=form)
-        # TODO: format list of Instance objects
-        return None
+        if as_http:
+            return response
+        view = FederatedInstances(response.json())
+        return {
+            "allowed": view.allowed,
+            "blocked": view.blocked,
+            "linked": view.linked
+        }
 
     def get_modlog(self, type_: str, community_id: int = None,
                    limit: int = None, mod_person_id: int = None,
@@ -1034,11 +1067,45 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/modlog", self._headers,
+        response = get_handler(f"{self._api_url}/modlog", self._headers,
                                None, params=form)
-        # TODO: format dict
-        return None
+        if as_http:
+            return response
+        response = response.json()
+        return {
+            "admin_purge_comment": AdminPurgeComment(
+                **response["admin_purge_comment"]
+            ),
+            "admin_purge_community": AdminPurgeCommunity(
+                **response["admin_purge_community"]
+            ),
+            "admin_purge_person": AdminPurgePerson(
+                **response["admin_purge_person"]
+            ),
+            "admin_purge_post": AdminPurgePost(
+                **response["admin_purge_post"]
+            ),
+            "mod_add": ModAdd(**response["mod_add"]),
+            "mod_add_community": ModAddCommunity(
+                **response["mod_add_community"]
+            ),
+            "mod_ban": ModBan(**response["mod_ban"]),
+            "mod_ban_from_community": ModBanFromCommunity(
+                **response["banned_from_communtity"]
+            ),
+            "mod_feature_post": ModFeaturePost(**response["mod_feature_post"]),
+            "mod_hide_community": ModHideCommunity(
+                **response["mod_hide_community"]
+            ),
+            "mod_lock_post": ModLockPost(**response["mod_lock_post"]),
+            "mod_remove_comment": ModRemoveComment(
+                **response["mod_remove_comment"]
+            ),
+            "mod_remove_post": ModRemovePost(**response["mod_remove_post"]),
+            "mod_transfer_community": ModTransferCommunity(
+                **response["mod_transfer_community"]
+            )
+        }
 
     def get_person_details(self, community_id: int = None, limit: int = None,
                            page: int = None, person_id: int = None,
@@ -1070,11 +1137,12 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/user", self._headers,
+        response = get_handler(f"{self._api_url}/user", self._headers,
                                None, params=form)
-        # TODO: format Person object
-        return None
+        if as_http:
+            return response
+        view = PersonView(response.json())
+        return view.person
 
     def get_person_mentions(self, limit: int = None, page: int = None,
                             sort: str = None, unread_only: bool = None,
@@ -1102,11 +1170,12 @@ class LemmyHttp(object):
         form = create_form(locals())
         form["auth"] = self.key
         form["unread_only"] = str(unread_only).lower()
-        if as_http:
-            return get_handler(f"{self._api_url}/user/mention",
+        response = get_handler(f"{self._api_url}/user/mention",
                                self._headers, None, params=form)
-        # TODO: format list of Comment objects
-        return None
+        if as_http:
+            return response
+        views = [PersonMentionView(m) for m in response.json()["mentions"]]
+        return [v.comment for v in views]
 
     def get_post(self, comment_id: int = None, id: int = None,
                  as_http: bool = True) -> Union[
@@ -1127,11 +1196,12 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/post", self._headers,
+        response = get_handler(f"{self._api_url}/post", self._headers,
                                None, params=form)
-        # TODO: format Post object
-        return None
+        if as_http:
+            return response
+        view = PostView(response.json())
+        return view.post
 
     def get_posts(self, community_id: int = None, community_name: str = None,
                   limit: int = None, page: int = None, saved_only: bool = None,
@@ -1162,11 +1232,12 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/post/list", self._headers,
+        response = get_handler(f"{self._api_url}/post/list", self._headers,
                                None, params=form)
-        # TODO: format list of Post objects
-        return None
+        if as_http:
+            return response
+        views = [PostView(p) for p in response.json()["posts"]]
+        return [v.post for v in views]
 
     def get_private_messages(self, limit: int = None, page: int = None,
                              unread_only: bool = None,
@@ -1192,11 +1263,13 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/private_message/list",
+        response = get_handler(f"{self._api_url}/private_message/list",
                                self._headers, None, params=form)
-        # TODO: format list of PrivateMessage objects
-        return None
+        if as_http:
+            return response
+        views = [PrivateMessageView(pm)
+                 for pm in response.json()["private_messages"]]
+        return [v.private_message for v in views]
 
     def get_replies(self, limit: int = None, page: int = None,
                     sort: str = None, unread_only: bool = None,
@@ -1221,11 +1294,12 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
-        if as_http:
-            return get_handler(f"{self._api_url}/user/replies",
+        response = get_handler(f"{self._api_url}/user/replies",
                                self._headers, None, params=form)
-        # TODO: format list of Comment objects
-        return None
+        if as_http:
+            return response
+        views = [CommentReplyView(r) for r in response.json()["replies"]]
+        return [v.comment for v in views]
 
     def get_report_count(self, community_id: int = None,
                          as_http: bool = True) -> Union[
@@ -1250,12 +1324,18 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        if as_http:
-            form["auth"] = self.key
-            return get_handler(f"{self._api_url}/user/report_count",
+        form["auth"] = self.key
+        response = get_handler(f"{self._api_url}/user/report_count",
                                self._headers, None, params=form)
-        # TODO: format dict
-        return None
+        if as_http:
+            return response
+        response = response.json()
+        return {
+            "comment_reports": response["comment_reports"],
+            "community_id": response["community_id"],
+            "post_reports": response["post_reports"],
+            "private_message_reports": response["private_message_reports"]
+        }
 
     def get_site(self, as_http: bool = True) -> Union[requests.Response, dict]:
         """ get_site: return site info
@@ -1265,7 +1345,7 @@ class LemmyHttp(object):
                 False, returns a dictionary in the form:
                     {
                         "site": plemmy.objects.Site,
-                        "site_aggregates": plemmy.objects.SiteAggregates
+                        "counts": plemmy.objects.SiteAggregates
                     }
 
         Returns:
@@ -1274,11 +1354,15 @@ class LemmyHttp(object):
         """
 
         form = {"auth": self.key}
-        if as_http:
-            return get_handler(f"{self._api_url}/site", self._headers,
+        response = get_handler(f"{self._api_url}/site", self._headers,
                                None, params=form)
-        # TODO: format dict
-        return None
+        if as_http:
+            return response
+        view = SiteView(response.json()["site_view"])
+        return {
+            "site": view.site,
+            "counts": view.counts
+        }
 
     def get_site_metadata(self, url: str,
                           as_http: bool = True) -> Union[
@@ -1297,32 +1381,44 @@ class LemmyHttp(object):
         """
 
         form = {"url": url}
-        if as_http:
-            return get_handler(f"{self._api_url}/post/site_metadata",
+        response = get_handler(f"{self._api_url}/post/site_metadata",
                                self._headers, None, params=form)
-        # TODO: format SiteMetadata object
-        return None
+        if as_http:
+            return response
+        response = response.json()
+        return SiteMetadata(**response["metadata"])
 
     def get_unread_count(self, as_http: bool = True) -> Union[
              requests.Response, int
             ]:
-        """ get_unread_count: get number of unread notifications
+        """ get_unread_count: get number of unread mentions, private messages,
+        and replies
 
         Args:
             as_http (bool): if True, returns requests.Response object; if
                 False, returns an integer
 
         Returns:
-            Union[requests.Response, int]: result of API call if as_http is
-                True, else an int
+            Union[requests.Response, dict]: result of API call if as_http is
+                True, else a dictionary in the form:
+                    {
+                        "mentions": int,
+                        "private_messages": int,
+                        "replies": int
+                    }
         """
 
         form = {"auth": self.key}
-        if as_http:
-            return get_handler(f"{self._api_url}/user/unread_count",
+        response = get_handler(f"{self._api_url}/user/unread_count",
                                self._headers, None, params=form)
-        # TODO: format integer
-        return None
+        if as_http:
+            return response
+        response = response.json()
+        return {
+            "mentions": int(response["mentions"]),
+            "private_messages": int(response["private_messages"]),
+            "replies": int(response["replies"])
+        }
 
     def get_unread_registration_application_count(
             self, as_http: bool = True) -> Union[requests.Response, int]:
@@ -1339,13 +1435,13 @@ class LemmyHttp(object):
         """
 
         form = {"auth": self.key}
+        response = get_handler(
+            f"{self._api_url}/admin/registration_application/count",
+            self._headers, None, params=form
+        )
         if as_http:
-            return get_handler(
-                f"{self._api_url}/admin/registration_application/count",
-                self._headers, None, params=form
-            )
-        # TODO: format integer
-        return None
+            return response
+        return response.json()["registration_applications"]
 
     def leave_admin(self) -> requests.Response:
         """ leave_admin: current user leaves admin group
