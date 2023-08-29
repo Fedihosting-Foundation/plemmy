@@ -816,7 +816,9 @@ class LemmyHttp(object):
         return post_handler(f"{self._api_url}/community/follow",
                             self._headers, form)
 
-    def get_banned_persons(self, as_http: bool = True) -> requests.Response:
+    def get_banned_persons(self, as_http: bool = True) -> Union[
+          requests.Response, List["plemmy.objects.Person"]
+         ]:
         """ get_banned_persons: get a list of banned users
 
         Args:
@@ -836,7 +838,8 @@ class LemmyHttp(object):
         views = [PersonView(p) for p in response.json()["banned"]]
         return [v.person for v in views]
 
-    def get_captcha(self, as_http: bool = True) -> requests.Response:
+    def get_captcha(self, as_http: bool = True) -> Union[
+          requests.Response, "plemmy.objects.CaptchaResponse"]:
         """ get_captcha: get captcha for current user
 
         Args:
