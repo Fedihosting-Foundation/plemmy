@@ -41,7 +41,7 @@ srv.login("<username_or_email>", "<password>")
 Access specific communities:
 
 ```python
-from plemmy.responses import GetComunityResponse
+from plemmy.responses import GetCommunityResponse
 
 # obtain community, parse JSON
 api_response = srv.get_community(name="Lemmy")

@@ -291,7 +291,7 @@ class GetReportCountResponse(object):
         response = api_response.json()
         self.comment_reports = response["comment_reports"]
         if "community_id" in response.keys():
-            self.community_id = response["communtiy_id"]
+            self.community_id = response["community_id"]
         else:
             self.community_id = None
         self.post_reports = response["post_reports"]
