@@ -77,6 +77,7 @@ class CommentAggregates:
 
     child_count: int = None
     comment_id: int = None
+    controversy_rank: float = None
     downvotes: int = None
     hot_rank: int = None
     id: int = None
@@ -490,6 +491,9 @@ class PostAggregates:
     """https://join-lemmy.org/api/interfaces/PostAggregates.html"""
 
     comments: int = None
+    community_id: int = None
+    controversy_rank: float = None
+    creator_id: int = None
     downvotes: int = None
     featured_community: bool = None
     featured_local: bool = None
@@ -502,6 +506,8 @@ class PostAggregates:
     published: str = None
     score: int = None
     upvotes: int = None
+    newest_comment_time_necro: str = None,
+    newest_comment_time: str = None
 
 
 @dataclass
