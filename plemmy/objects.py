@@ -506,7 +506,7 @@ class PostAggregates:
     published: str = None
     score: int = None
     upvotes: int = None
-    newest_comment_time_necro: str = None,
+    newest_comment_time_necro: str = None
     newest_comment_time: str = None
 
 
