@@ -264,6 +264,7 @@ class LocalUser:
     email: str = None
     email_verified: bool = None
     id: int = None
+    infinite_scroll_enabled: bool = None
     interface_language: str = None
     open_links_in_new_tab: bool = None
     person_id: int = None
