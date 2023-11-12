@@ -1319,6 +1319,7 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         form["auth"] = self.key
+        form["unread_only"] = str(form["unread_only"]).lower()
         return get_handler(
             f"{self._api_url}/admin/registration_application/list",
             self._headers, None, params=form
