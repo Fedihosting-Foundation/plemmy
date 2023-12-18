@@ -18,6 +18,7 @@ def create_session(headers: dict, jwt: str) -> requests.Session:
     session.headers.update(headers)
     if jwt is not None:
         session.cookies.set("jwt", jwt)
+    return session
 
 
 def post_handler(session: requests.Session, url: str, json: dict,
