@@ -25,8 +25,8 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/tjkessler/plemmy"
-"Bug Tracker" = "https://github.com/tjkessler/plemmy/issues"
+"Homepage" = "https://github.com/lemmyworld/plemmy"
+"Bug Tracker" = "https://github.com/lemmyworld/plemmy/issues"
 
 [tool.pytest.ini_options]
 filterwarnings = [
