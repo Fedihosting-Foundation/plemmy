@@ -7,7 +7,7 @@ exclude = ["img*"]
 
 [project]
 name = "plemmy"
-version = "0.3.11"
+version = "0.4.0"
 authors = [
     { name="Travis Kessler", email="travis.j.kessler@gmail.com" },
 ]
@@ -16,6 +16,7 @@ readme = "README.md"
 requires-python = ">=3.7"
 dependencies = [
     "requests==2.31.0",
+    "typing-extensions==4.9.0",
 ]
 classifiers = [
     "Programming Language :: Python :: 3.7",
@@ -24,8 +25,8 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/tjkessler/plemmy"
-"Bug Tracker" = "https://github.com/tjkessler/plemmy/issues"
+"Homepage" = "https://github.com/lemmyworld/plemmy"
+"Bug Tracker" = "https://github.com/lemmyworld/plemmy/issues"
 
 [tool.pytest.ini_options]
 filterwarnings = [
