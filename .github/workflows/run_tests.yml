@@ -23,6 +23,7 @@ jobs:
       - name: Run tests
         uses: pavelzw/pytest-action@v2
         env:
+          COMMUNITY_ID: ${{ secrets.COMMUNITY_ID }}
           COMMUNITY_NAME: ${{ secrets.COMMUNITY_NAME }}
           INSTANCE_URL: ${{ secrets.INSTANCE_URL }}
           PASSWORD: ${{ secrets.PASSWORD }}
