@@ -15,7 +15,8 @@ def create_session(headers: dict, jwt: str) -> requests.Session:
     """
 
     session = requests.Session()
-    session.headers.update(headers)
+    if headers is not None:
+        session.headers.update(headers)
     if jwt is not None:
         session.cookies.set("jwt", jwt)
     return session
