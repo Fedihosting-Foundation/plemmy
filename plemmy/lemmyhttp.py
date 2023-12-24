@@ -1,30 +1,32 @@
-from typing import List
 import logging
 import requests
+from typing import List
+from typing_extensions import Self
 
-from .utils import post_handler, put_handler, get_handler, create_form
+from .utils import create_session, post_handler, put_handler, get_handler,\
+    create_form
 
 API_VERSION = "v3"
 
 
 class LemmyHttp(object):
 
-    def __init__(self, base_url: str, headers: dict = None) -> None:
+    def __init__(self, base_url: str, headers: dict = None,
+                 jwt: str = None) -> Self:
         """ LemmyHttp object: handles all POST, PUT, and GET operations from
         the LemmyHttp API (https://join-lemmy.org/api/classes/LemmyHttp.html)
 
         Args:
             base_url (str): Lemmy instance to connect to (e.g.,
-                "https://lemmy.ml")
-            headers (dict): optional headers
-
-        Returns:
-            None
+                "https://lemmy.world")
+            headers (dict, optional): optional headers
+            jwt (str, optional): login token if not immediately using
+                `LemmyHttp.login`
         """
 
         self._api_url = base_url + f"/api/{API_VERSION}"
         self._headers = headers
-        self.key = ""
+        self._session = create_session(self._headers, jwt)
         self.logger = logging.getLogger(__name__)
 
     def add_admin(self, added: bool, person_id: int) -> requests.Response:
@@ -39,8 +41,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/admin/add", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/admin/add",
+                            form)
 
     def add_mod_to_community(self, added: bool, community_id: int,
                              person_id: int) -> requests.Response:
@@ -56,9 +58,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/community/mod",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/community/mod",
+                            form)
 
     def approve_registration_application(
             self, approve: bool, id: int, deny_reason: str = None
@@ -76,10 +77,10 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
         return put_handler(
+            self._session,
             f"{self._api_url}/admin/registration_application/approve",
-            self._headers, form
+            form
         )
 
     def ban_from_community(self, ban: bool, community_id: int, person_id: int,
@@ -101,9 +102,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/community/ban_user",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/community/ban_user",
+                            form)
 
     def ban_person(self, ban: bool, person_id: int,
                    expires: int = None, reason: str = None,
@@ -123,8 +124,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/user/ban", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/user/ban",
+                            form)
 
     def block_community(self, block: bool,
                         community_id: int) -> requests.Response:
@@ -139,9 +140,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/community/block",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/community/block",
+                            form)
 
     def block_person(self, block: bool, person_id: int) -> requests.Response:
         """ block_person: block a user from this Lemmy instance
@@ -155,8 +155,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/user/block", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/user/block",
+                            form)
 
     def change_password(self, new_password: str, new_password_verify: str,
                         old_password: str) -> requests.Response:
@@ -172,9 +172,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/user/change_password",
-                           self._headers, form)
+        return put_handler(self._session,
+                           f"{self._api_url}/user/change_password",
+                           form)
 
     def create_comment(self, content: str, post_id: int,
                        form_id: str = None, language_id: int = None,
@@ -194,8 +194,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/comment", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/comment",
+                            form)
 
     def create_comment_report(self, comment_id: int,
                               reason: str) -> requests.Response:
@@ -210,9 +210,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/comment/report",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/comment/report",
+                            form)
 
     def create_community(self, name: str, title: str,
                          banner: str = None, description: str = None,
@@ -239,8 +238,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/community", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/community", form)
 
     def create_custom_emoji(self, alt_text: str, category: str,
                             image_url: str, keywords: List[str],
@@ -259,9 +257,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/custom_emoji",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/custom_emoji",
+                            form)
 
     def create_post(self, community_id: int, name: str, body: str = None,
                     honeypot: str = None, language_id: int = None,
@@ -282,8 +279,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/post", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/post", form)
 
     def create_post_report(self, post_id: int,
                            reason: str) -> requests.Response:
@@ -298,9 +294,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/post/report",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/post/report",
+                            form)
 
     def create_private_message(self, content: str,
                                recipient_id: int) -> requests.Response:
@@ -315,9 +310,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/private_message",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/private_message",
+                            form)
 
     def create_private_message_report(self, private_message_id: int,
                                       reason: str) -> requests.Response:
@@ -332,9 +326,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/private_message_report",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/private_message_report", form)
 
     def create_site(self, name: str, actor_name_max_length: int = None,
                     allowed_instances: List[str] = None,
@@ -443,8 +436,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/site", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/site", form)
 
     def delete_account(self, password: str) -> requests.Response:
         """ delete_account: deletes currently-logged-in account
@@ -457,9 +449,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/user/delete_account",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/user/delete_account", form)
 
     def delete_comment(self, comment_id: int,
                        deleted: bool) -> requests.Response:
@@ -474,9 +465,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/comment/delete",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/comment/delete",
+                            form)
 
     def delete_community(self, community_id: int,
                          deleted: bool) -> requests.Response:
@@ -491,9 +481,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/community/delete",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/community/delete",
+                            form)
 
     def delete_custom_emoji(self, id: int) -> requests.Response:
         """ delete_custom_emoji: delete a site emoji
@@ -505,9 +494,9 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"id": id, "auth": self.key}
-        return post_handler(f"{self._api_url}/custom_emoji/delete",
-                            self._headers, form)
+        form = create_form(locals())
+        return post_handler(self._session,
+                            f"{self._api_url}/custom_emoji/delete", form)
 
     def delete_post(self, deleted: bool, post_id: int) -> requests.Response:
         """ delete_post: delete a post
@@ -521,9 +510,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/post/delete",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/post/delete",
+                            form)
 
     def delete_private_message(self, deleted: bool,
                                private_message_id: int) -> requests.Response:
@@ -538,9 +526,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/private_message/delete",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/private_message/delete", form)
 
     def distinguish_comment(self, comment_id: int,
                             distinguished: bool) -> requests.Response:
@@ -555,9 +542,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/comment/distinguish",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/comment/distinguish", form)
 
     def edit_comment(self, comment_id: int, content: str = None,
                      form_id: str = None, language_id: int = None
@@ -575,8 +561,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/comment", self._headers, form)
+        return put_handler(self._session, f"{self._api_url}/comment", form)
 
     def edit_community(self, community_id: int, banner: str = None,
                        description: str = None,
@@ -603,8 +588,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/community", self._headers, form)
+        return put_handler(self._session, f"{self._api_url}/community", form)
 
     def edit_custom_emoji(self, alt_text: str, category: str, id: int,
                           image_url: str, keywords: List[str]
@@ -623,8 +607,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/custom_emoji")
+        return put_handler(self._session, f"{self._api_url}/custom_emoji",
+                           form)
 
     def edit_post(self, post_id: int, body: str = None,
                   language_id: int = None, name: str = None, nsfw: bool = None,
@@ -644,8 +628,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/post", self._headers, form)
+        return put_handler(self._session, f"{self._api_url}/post", form)
 
     def edit_private_message(self, content: str,
                              private_message_id: int) -> requests.Response:
@@ -660,9 +643,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/private_message",
-                           self._headers, form)
+        return put_handler(self._session, f"{self._api_url}/private_message",
+                           form)
 
     def edit_site(self, actor_name_max_length: int = None,
                   allowed_instances: List[str] = None,
@@ -770,8 +752,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/site", self._headers, form)
+        return put_handler(self._session, f"{self._api_url}/site", form)
 
     def feature_post(self, feature_type: str, featured: bool,
                      post_id: int) -> requests.Response:
@@ -787,9 +768,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/post/feature",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/post/feature",
+                            form)
 
     def follow_community(self, community_id: int,
                          follow: bool) -> requests.Response:
@@ -804,9 +784,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/community/follow",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/community/follow",
+                            form)
 
     def get_banned_persons(self) -> requests.Response:
         """ get_banned_persons: get a list of banned users
@@ -818,9 +797,8 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/user/banned", self._headers,
-                           None, params=form)
+        return get_handler(self._session, f"{self._api_url}/user/banned",
+                           None, None)
 
     def get_captcha(self) -> requests.Response:
         """ get_captcha: get captcha for current user
@@ -832,8 +810,8 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        return get_handler(f"{self._api_url}/user/get_captcha",
-                           self._headers, None, None)
+        return get_handler(self._session, f"{self._api_url}/user/get_captcha",
+                           None, None)
 
     def get_comment(self, id: int) -> requests.Response:
         """ get_comment: obtain a comment by ID
@@ -845,8 +823,8 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"id": id, "auth": self.key}
-        return get_handler(f"{self._api_url}/comment", self._headers,
+        form = create_form(locals())
+        return get_handler(self._session, f"{self._api_url}/comment",
                            None, params=form)
 
     def get_comments(self, community_id: int = None,
@@ -878,9 +856,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/comment/list",
-                           self._headers, None, params=form)
+        return get_handler(self._session, f"{self._api_url}/comment/list",
+                           None, params=form)
 
     def get_community(self, id: int = None,
                       name: str = None) -> requests.Response:
@@ -895,8 +872,26 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/community", self._headers,
+        return get_handler(self._session, f"{self._api_url}/community",
+                           None, params=form)
+
+    def get_communities(self, type_: str = None, sort: str = None,
+                        page: int = None,
+                        limit: int = None) -> requests.Response:
+        """ get_communities: list all communities
+
+        Args:
+            type_ (str): "All", "Community", "Subscribed", "Local" (optional)
+            sort (str): "Hot", "New", "Old", "Top" (optional)
+            page (int): page to obtain communities from (optional)
+            limit (int): max. num. communities to obtain (optional)
+
+        Returns:
+            requests.Response: result of API call
+        """
+
+        form = create_form(locals())
+        return get_handler(self._session, f"{self._api_url}/community/list",
                            None, params=form)
 
     def get_federated_instances(self) -> requests.Response:
@@ -909,9 +904,9 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/federated_instances",
-                           self._headers, None, params=form)
+        return get_handler(self._session,
+                           f"{self._api_url}/federated_instances", None,
+                           params=None)
 
     def get_modlog(self, type_: str, community_id: int = None,
                    limit: int = None, mod_person_id: int = None,
@@ -938,8 +933,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/modlog", self._headers,
+        return get_handler(self._session, f"{self._api_url}/modlog",
                            None, params=form)
 
     def get_person_details(self, community_id: int = None, limit: int = None,
@@ -965,8 +959,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/user", self._headers,
+        return get_handler(self._session, f"{self._api_url}/user",
                            None, params=form)
 
     def get_person_mentions(self, limit: int = None, page: int = None,
@@ -987,10 +980,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
         form["unread_only"] = str(unread_only).lower()
-        return get_handler(f"{self._api_url}/user/mention",
-                           self._headers, None, params=form)
+        return get_handler(self._session, f"{self._api_url}/user/mention",
+                           None, params=form)
 
     def get_post(self, comment_id: int = None,
                  id: int = None) -> requests.Response:
@@ -1005,8 +997,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/post", self._headers,
+        return get_handler(self._session, f"{self._api_url}/post",
                            None, params=form)
 
     def get_posts(self, community_id: int = None, community_name: str = None,
@@ -1032,8 +1023,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/post/list", self._headers,
+        return get_handler(self._session, f"{self._api_url}/post/list",
                            None, params=form)
 
     def get_private_messages(self, limit: int = None, page: int = None,
@@ -1051,9 +1041,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/private_message/list",
-                           self._headers, None, params=form)
+        return get_handler(self._session,
+                           f"{self._api_url}/private_message/list",
+                           None, params=form)
 
     def get_replies(self, limit: int = None, page: int = None,
                     sort: str = None,
@@ -1072,9 +1062,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/user/replies",
-                           self._headers, None, params=form)
+        return get_handler(self._session, f"{self._api_url}/user/replies",
+                           None, params=form)
 
     def get_report_count(self, community_id: int = None) -> requests.Response:
         """ get_report_count: number of reports
@@ -1087,9 +1076,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/user/report_count",
-                           self._headers, None, params=form)
+        return get_handler(self._session, f"{self._api_url}/user/report_count",
+                           None, params=form)
 
     def get_site(self) -> requests.Response:
         """ get_site: return site info
@@ -1101,9 +1089,8 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/site", self._headers,
-                           None, params=form)
+        return get_handler(self._session, f"{self._api_url}/site",
+                           None, None)
 
     def get_site_metadata(self, url: str) -> requests.Response:
         """ get_site_metadata: return an instance's metadata
@@ -1115,9 +1102,10 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"url": url}
-        return get_handler(f"{self._api_url}/post/site_metadata",
-                           self._headers, None, params=form)
+        form = create_form(locals())
+        return get_handler(self._session,
+                           f"{self._api_url}/post/site_metadata",
+                           None, params=form)
 
     def get_unread_count(self) -> requests.Response:
         """ get_unread_count: get number of unread notifications
@@ -1129,9 +1117,8 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"auth": self.key}
-        return get_handler(f"{self._api_url}/user/unread_count",
-                           self._headers, None, params=form)
+        return get_handler(self._session, f"{self._api_url}/user/unread_count",
+                           None, None)
 
     def get_unread_registration_application_count(self) -> requests.Response:
         """ get_unread_registration_application_count: number of unread
@@ -1144,10 +1131,10 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"auth": self.key}
         return get_handler(
+            self._session,
             f"{self._api_url}/admin/registration_application/count",
-            self._headers, None, params=form
+            None, None
         )
 
     def leave_admin(self) -> requests.Response:
@@ -1160,9 +1147,8 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"auth": self.key}
-        return post_handler(f"{self._api_url}/user/leave_admin",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/user/leave_admin",
+                            None, None)
 
     def like_comment(self, comment_id: int, score: int) -> requests.Response:
         """ like_comment: like a comment :)
@@ -1176,9 +1162,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/comment/like",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/comment/like",
+                            form)
 
     def like_post(self, post_id: int, score: int) -> requests.Response:
         """ like_post: like a post :)
@@ -1192,8 +1177,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/post/like", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/post/like", form)
 
     def list_comment_reports(self, community_id: int = None, limit: int = None,
                              page: int = None, unresolved_only: bool = None
@@ -1212,9 +1196,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/comment/report/list",
-                           self._headers, None, params=form)
+        return get_handler(self._session,
+                           f"{self._api_url}/comment/report/list",
+                           None, params=form)
 
     def list_communities(self, limit: int = None, page: int = None,
                          sort: str = None,
@@ -1234,9 +1218,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/community/list",
-                           self._headers, None, params=form)
+        return get_handler(self._session, f"{self._api_url}/community/list",
+                           None, params=form)
 
     def list_post_reports(self, community_id: int = None, limit: int = None,
                           page: int = None, unresolved_only: bool = None
@@ -1255,9 +1238,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/post/report/list",
-                           self._headers, None, params=form)
+        return get_handler(self._session, f"{self._api_url}/post/report/list",
+                           None, params=form)
 
     def list_private_message_reports(self, limit: int = None, page: int = None,
                                      unresolved_only: bool = None
@@ -1276,9 +1258,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/private_message/report/list",
-                           self._headers, None, params=form)
+        return get_handler(self._session,
+                           f"{self._api_url}/private_message/report/list",
+                           None, params=form)
 
     def list_registration_applications(self, limit: int = None,
                                        page: int = None,
@@ -1298,10 +1280,11 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
+        form["unread_only"] = str(form["unread_only"]).lower()
         return get_handler(
+            self._session,
             f"{self._api_url}/admin/registration_application/list",
-            self._headers, None, params=form
+            None, params=form
         )
 
     def lock_post(self, locked: bool, post_id: int) -> requests.Response:
@@ -1316,12 +1299,12 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/post/lock", self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/post/lock", form)
 
     def login(self, username_or_email: str,
               password: str) -> requests.Response:
-        """ login: login
+        """ login: login to Lemmy instance, setting `LemmyHttp._session` jwt to
+        authenticated user jwt
 
         Args:
             username_or_email (str): username or email for login
@@ -1332,8 +1315,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        re = post_handler(f"{self._api_url}/user/login", self._headers, form)
-        self.key = re.json()["jwt"]
+        re = post_handler(self._session, f"{self._api_url}/user/login", form)
+        self._session = create_session(self._headers, re.json()["jwt"])
         return re
 
     def mark_all_as_read(self) -> requests.Response:
@@ -1346,9 +1329,9 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"auth": self.key}
-        return post_handler(f"{self._api_url}/user/mark_all_as_read",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/user/mark_all_as_read",
+                            None, None)
 
     def mark_comment_reply_as_read(self, comment_reply_id: int,
                                    read: bool) -> requests.Response:
@@ -1363,9 +1346,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/comment/mark_as_read",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/comment/mark_as_read",
+                            form)
 
     def mark_person_mention_as_read(self, person_mention_id: int,
                                     read: bool) -> requests.Response:
@@ -1380,9 +1363,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/user/mention/mark_as_read",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/user/mention/mark_as_read",
+                            form)
 
     def mark_post_as_read(self, post_id: int, read: bool) -> requests.Response:
         """ mark_post_as_read: mark a post as read
@@ -1396,9 +1379,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/post/mark_as_read",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/post/mark_as_read", form)
 
     def mark_private_message_as_read(self, private_message_id: int,
                                      read: bool) -> requests.Response:
@@ -1413,9 +1395,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/private_message/mark_as_read",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/private_message/mark_as_read",
+                            form)
 
     def password_change_after_reset(self, password: str, password_verify: str,
                                     token: str) -> requests.Response:
@@ -1431,8 +1413,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        return post_handler(f"{self._api_url}/user/password_change",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/user/password_change", form)
 
     def password_reset(self, email: str) -> requests.Response:
         """ password_reset: sent a reset form to user's email
@@ -1444,9 +1426,10 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"email": email}
-        return post_handler(f"{self._api_url}/user/password_reset",
-                            self._headers, form)
+        form = create_form(locals())
+        return post_handler(self._session,
+                            f"{self._api_url}/user/password_reset",
+                            form)
 
     def purge_comment(self, comment_id: int,
                       reason: str = None) -> requests.Response:
@@ -1461,9 +1444,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/admin/purge/comment",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/admin/purge/comment", form)
 
     def purge_community(self, community_id: int,
                         reason: str = None) -> requests.Response:
@@ -1478,9 +1460,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/admin/purge/community",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/admin/purge/community", form)
 
     def purge_person(self, person_id: int,
                      reason: str = None) -> requests.Response:
@@ -1495,9 +1476,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/admin/purge/person",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/admin/purge/person", form)
 
     def purge_post(self, post_id: int,
                    reason: str = None) -> requests.Response:
@@ -1512,9 +1492,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/admin/purge/post",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/admin/purge/post",
+                            form)
 
     def register(self, password: str, password_verify: str, show_nsfw: bool,
                  username: str, answer: str = None, captcha_answer: str = None,
@@ -1538,8 +1517,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        return post_handler(f"{self._api_url}/user/register",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/user/register",
+                            form)
 
     def remove_comment(self, comment_id: int, removed: bool,
                        reason: str = None) -> requests.Response:
@@ -1555,9 +1534,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/comment/remove",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/comment/remove",
+                            form)
 
     def remove_community(self, community_id: int, removed: bool,
                          expires: int = None,
@@ -1575,9 +1553,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/community/remove",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/community/remove",
+                            form)
 
     def remove_post(self, post_id: int, removed: bool,
                     reason: str = None) -> requests.Response:
@@ -1593,9 +1570,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/post/remove",
-                            self._headers, form)
+        return post_handler(self._session, f"{self._api_url}/post/remove",
+                            form)
 
     def resolve_comment_report(self, report_id: int,
                                resolved: bool) -> requests.Response:
@@ -1610,9 +1586,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/comment/report/resolve",
-                           self._headers, form)
+        return put_handler(self._session,
+                           f"{self._api_url}/comment/report/resolve", form)
 
     def resolve_object(self, q: str) -> requests.Response:
         """ resolve_object: resolve object
@@ -1624,9 +1599,9 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"q": q, "auth": self.key}
-        return get_handler(f"{self._api_url}/resolve_object",
-                           self._headers, None, params=form)
+        form = create_form(locals())
+        return get_handler(self._session, f"{self._api_url}/resolve_object",
+                           None, params=form)
 
     def resolve_post_report(self, report_id: int,
                             resolved: bool) -> requests.Response:
@@ -1641,9 +1616,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/post/report/resolve",
-                           self._headers, form)
+        return put_handler(self._session,
+                           f"{self._api_url}/post/report/resolve", form)
 
     def resolve_private_message_report(self, report_id: int,
                                        resolved: bool) -> requests.Response:
@@ -1655,9 +1629,9 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/private_message/report/resolve",
-                           self._headers, form)
+        return put_handler(self._session,
+                           f"{self._api_url}/private_message/report/resolve",
+                           form)
 
     def save_comment(self, comment_id: int, save: bool) -> requests.Response:
         """ save_comment: save a comment
@@ -1671,9 +1645,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/comment/save",
-                           self._headers, form)
+        return put_handler(self._session, f"{self._api_url}/comment/save",
+                           form)
 
     def save_post(self, post_id: int, save: bool) -> requests.Response:
         """ save_post: save a post
@@ -1687,8 +1660,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/post/save", self._headers, form)
+        return put_handler(self._session, f"{self._api_url}/post/save", form)
 
     def save_user_settings(self, avatar: str = None, banner: str = None,
                            bio: str = None, bot_account: bool = None,
@@ -1744,9 +1716,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return put_handler(f"{self._api_url}/user/save_user_settings",
-                           self._headers, form)
+        return put_handler(self._session,
+                           f"{self._api_url}/user/save_user_settings", form)
 
     def search(self, q: str, community_id: int = None,
                community_name: str = None, creator_id: int = None,
@@ -1774,9 +1745,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return get_handler(f"{self._api_url}/search", self._headers,
-                           None, params=form)
+        return get_handler(self._session, f"{self._api_url}/search", None,
+                           params=form)
 
     def transfer_community(self, community_id: int,
                            person_id: int) -> requests.Response:
@@ -1791,9 +1761,8 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
-        form["auth"] = self.key
-        return post_handler(f"{self._api_url}/community/transfer",
-                            self._headers, form)
+        return post_handler(self._session,
+                            f"{self._api_url}/community/transfer", form)
 
     def verify_email(self, token: str) -> requests.Response:
         """ verify_email: verify user email using token
@@ -1805,6 +1774,6 @@ class LemmyHttp(object):
             requests.Response: result of API call
         """
 
-        form = {"token": token}
-        return post_handler(f"{self._api_url}/user/verify_email",
-                            self._headers, form)
+        form = create_form(locals())
+        return post_handler(self._session,
+                            f"{self._api_url}/user/verify_email", form)

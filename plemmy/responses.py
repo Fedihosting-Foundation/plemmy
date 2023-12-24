@@ -238,8 +238,9 @@ class GetPersonDetailsResponse(object):
     def __init__(self, api_response: requests.Response) -> None:
 
         response = api_response.json()
-        self.comments = CommentView(response["comments"])
-        self.moderates = CommunityModeratorView(response["moderates"])
+        self.comments = [CommentView(c) for c in response["comments"]]
+        self.moderates = [CommunityModeratorView(m)
+                          for m in response["moderates"]]
         self.person_view = PersonView(response["person_view"])
         self.posts = [PostView(p) for p in response["posts"]]
 
@@ -261,7 +262,8 @@ class GetPostResponse(object):
         response = api_response.json()
         self.community_view = CommunityView(response["community_view"])
         self.cross_posts = [PostView(p) for p in response["cross_posts"]]
-        self.moderators = [CommunityModeratorView(m) for m in response["moderators"]]
+        self.moderators = [CommunityModeratorView(m)
+                           for m in response["moderators"]]
         self.post_view = PostView(response["post_view"])
 
 
@@ -291,7 +293,7 @@ class GetReportCountResponse(object):
         response = api_response.json()
         self.comment_reports = response["comment_reports"]
         if "community_id" in response.keys():
-            self.community_id = response["communtiy_id"]
+            self.community_id = response["community_id"]
         else:
             self.community_id = None
         self.post_reports = response["post_reports"]
