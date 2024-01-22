@@ -1,10 +1,10 @@
 # Plemmy: a Python package for accessing the Lemmy API
 
-<img src="https://github.com/lemmyworld/plemmy/blob/main/img/plemmy.png" alt="drawing" width="325"/>
+<img src="https://github.com/Fedihosting-Foundation/plemmy/blob/main/img/plemmy.png" alt="drawing" width="325"/>
 
-[![GitHub version](https://badge.fury.io/gh/lemmyworld%2Fplemmy.svg)](https://badge.fury.io/gh/lemmyworld%2Fplemmy)
+[![GitHub version](https://badge.fury.io/gh/Fedihosting-Foundation%2Fplemmy.svg)](https://badge.fury.io/gh/Fedihosting-Foundation%2Fplemmy)
 [![PyPI version](https://badge.fury.io/py/plemmy.svg)](https://badge.fury.io/py/plemmy)
-[![GitHub license](https://img.shields.io/badge/license-Apache-blue.svg)](https://raw.githubusercontent.com/lemmyworld/plemmy/master/LICENSE.txt)
+[![GitHub license](https://img.shields.io/badge/license-Apache-blue.svg)](https://raw.githubusercontent.com/Fedihosting-Foundation/plemmy/master/LICENSE.txt)
 
 Plemmy allows you to interact with any Lemmy instance using Python and the [LemmyHttp API](https://join-lemmy.org/api/classes/LemmyHttp.html).
 
@@ -15,7 +15,7 @@ Plemmy allows you to interact with any Lemmy instance using Python and the [Lemm
 For the most up-to-date version of Plemmy, clone and install from the repository:
 
 ```
-git clone https://github.com/lemmyworld/plemmy
+git clone https://github.com/Fedihosting-Foundation/plemmy
 cd plemmy
 python -m pip install .
 ```
@@ -74,7 +74,7 @@ print(post.name)
 print(post.body)
 ```
 
-Full documentation is on its way, but in the meantime check out our source code and some [examples](https://github.com/lemmyworld/plemmy/tree/main/examples).
+Full documentation is on its way, but in the meantime check out our source code and some [examples](https://github.com/Fedihosting-Foundation/plemmy/tree/main/examples).
 
 ## Reporting issues, making contributions, etc. ##
 
