@@ -183,6 +183,16 @@ class ImageFile:
 
 
 @dataclass
+class FederationState:
+    instance_id: int = None
+    last_successful_id: int = None
+    last_successful_published_time: str = None
+    fail_count: int = None
+    last_retry: str = None
+    next_retry: str = None
+
+
+@dataclass
 class Instance:
     """https://join-lemmy.org/api/interfaces/Instance.html"""
 
@@ -192,6 +202,7 @@ class Instance:
     software: str = None
     updated: str = None
     version: str = None
+    federation_state: FederationState | None = None
 
 
 @dataclass
