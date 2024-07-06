@@ -1062,6 +1062,7 @@ class LemmyHttp(object):
         """
 
         form = create_form(locals())
+        form["unread_only"] = str(unread_only).lower()
         return get_handler(self._session, f"{self._api_url}/user/replies",
                            None, params=form)
 
