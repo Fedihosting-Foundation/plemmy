@@ -33,7 +33,7 @@ Interact with a Lemmy instance using the _LemmyHttp_ object:
 ```python
 from plemmy import LemmyHttp
 
-# create object for Lemmy.ml, log in
+# create object for Lemmy.world, log in
 srv = LemmyHttp("https://lemmy.world")
 srv.login("<username_or_email>", "<password>")
 ```
