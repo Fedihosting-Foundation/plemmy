@@ -1016,7 +1016,8 @@ class LemmyHttp(object):
             sort (str): "Active", "Hot", "MostComments", "New", "NewComments",
                 "Old", "TopAll", "TopDay", "TopMonth", "TopWeek",
                 "TopYear" (optional)
-            type_ (str): "All", "Community", "Local", "Subscribed" (optional)
+            type_ (str): "All", "Local", "Subscribed", "ModeratorView"
+                (optional)
 
         Returns:
             requests.Response: result of API call
