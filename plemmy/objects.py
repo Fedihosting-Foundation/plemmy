@@ -132,6 +132,7 @@ class Community:
     instance_id: int = None
     updated: str = None
     banner: bool = None
+    visibility: str = None
 
 
 @dataclass
@@ -202,7 +203,7 @@ class Instance:
     software: str = None
     updated: str = None
     version: str = None
-    federation_state: FederationState | None = None
+    federation_state: FederationState = None
 
 
 @dataclass
