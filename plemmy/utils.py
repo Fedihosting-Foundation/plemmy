@@ -70,14 +70,14 @@ def put_handler(session: requests.Session, url: str, json: dict,
     return re
 
 
-def get_handler(session: requests.Session, url: str, json: dict,
+def get_handler(session: requests.Session, url: str, json: dict | None = None,
                 params: dict = None) -> requests.Response:
     """ get_handler: handles all GET operations for Plemmy
 
     Args:
         session (requests.Session): open Lemmy session
         url (str): URL of API call
-        json (dict): json/form data
+        json (dict): json/form data (optional)
         params (dict, optional): parameters for GET operation
 
     Returns:
