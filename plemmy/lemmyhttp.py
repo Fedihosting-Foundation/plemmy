@@ -3,7 +3,7 @@ import requests
 from typing import List
 from typing_extensions import Self
 
-from .utils import create_session, post_handler, put_handler, get_handler,\
+from .utils import create_session, post_handler, put_handler, get_handler, \
     create_form
 
 API_VERSION = "v3"
@@ -1003,7 +1003,8 @@ class LemmyHttp(object):
     def get_posts(self, community_id: int = None, community_name: str = None,
                   limit: int = None, page: int = None, saved_only: bool = None,
                   sort: str = None,
-                  type_: str = None) -> requests.Response:
+                  type_: str = None,
+                  page_cursor: str = None) -> requests.Response:
         """ get_posts: obtain posts from a community
 
         Args:
@@ -1018,6 +1019,7 @@ class LemmyHttp(object):
                 "TopYear" (optional)
             type_ (str): "All", "Local", "Subscribed", "ModeratorView"
                 (optional)
+            page_cursor (str): cursor for pagination (optional)
 
         Returns:
             requests.Response: result of API call
