@@ -638,3 +638,11 @@ class Tagline:
     local_site_id: int = None
     published: str = None
     updated: str = None
+
+
+@dataclass
+class ImageFile:
+    """https://join-lemmy.org/api/interfaces/ImageFile.html"""
+
+    delete_token: str = None
+    file: str = None

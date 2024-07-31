@@ -1,10 +1,12 @@
 import logging
+
 import requests
-from typing import List
+from typing import List, BinaryIO
 from typing_extensions import Self
 
+from .types import UploadFile, File
 from .utils import create_session, post_handler, put_handler, get_handler, \
-    create_form
+    create_form, file_handler
 
 API_VERSION = "v3"
 
@@ -12,7 +14,7 @@ API_VERSION = "v3"
 class LemmyHttp(object):
 
     def __init__(self, base_url: str, headers: dict = None,
-                 jwt: str = None) -> Self:
+                 jwt: str = None):
         """ LemmyHttp object: handles all POST, PUT, and GET operations from
         the LemmyHttp API (https://join-lemmy.org/api/classes/LemmyHttp.html)
 
@@ -24,6 +26,10 @@ class LemmyHttp(object):
                 `LemmyHttp.login`
         """
 
+        if not base_url.startswith("http://") and not base_url.startswith("https://"):
+            base_url = "https://" + base_url
+
+        self._base_url = base_url
         self._api_url = base_url + f"/api/{API_VERSION}"
         self._headers = headers
         self._session = create_session(self._headers, jwt)
@@ -1320,7 +1326,10 @@ class LemmyHttp(object):
 
         form = create_form(locals())
         re = post_handler(self._session, f"{self._api_url}/user/login", form)
-        self._session = create_session(self._headers, re.json()["jwt"])
+        if re.status_code == 200:
+            self._session = create_session(self._headers, re.json()["jwt"])
+        else:
+            raise Exception("Login failed with status code: " + str(re.status_code))
         return re
 
     def mark_all_as_read(self) -> requests.Response:
@@ -1781,3 +1790,15 @@ class LemmyHttp(object):
         form = create_form(locals())
         return post_handler(self._session,
                             f"{self._api_url}/user/verify_email", form)
+
+    def upload_image(self, file: File) -> requests.Response:
+        """ upload_image: upload an image
+
+        Args:
+            file: the image to upload
+
+        Returns:
+            requests.Response: result of API call
+        """
+        return file_handler(self._session, f"{self._base_url}/pictrs/image",
+                            {"images[]": file})

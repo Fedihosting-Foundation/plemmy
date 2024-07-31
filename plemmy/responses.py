@@ -506,13 +506,13 @@ class UploadImageResponse(object):
     def __init__(self, api_response: requests.Response) -> None:
 
         response = api_response.json()
+        self.msg = response["msg"]
         if "delete_url" in response.keys():
             self.delete_url = response["delete_url"]
         else:
             self.delete_url = None
         if "files" in response.keys():
             self.files = [ImageFile(**f) for f in response["files"]]
-        self.msg = response["msg"]
         if "url" in response.keys():
             self.url = response["url"]
         else:

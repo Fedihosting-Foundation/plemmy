@@ -1,5 +1,8 @@
 import logging
+
 import requests
+
+from plemmy.types import UploadFile
 
 
 def create_session(headers: dict, jwt: str) -> requests.Session:
@@ -39,6 +42,29 @@ def post_handler(session: requests.Session, url: str, json: dict,
     logger = logging.getLogger(__name__)
     try:
         re = session.post(url, json=json, params=params, timeout=30)
+        logger.debug(f"Code: {re.status_code}")
+    except requests.exceptions.RequestException as ex:
+        logger.error(f"POST error: {ex}")
+        return None
+    return re
+
+
+def file_handler(session: requests.Session, url: str,
+                 files: UploadFile) -> requests.Response:
+    """ file_handler: handles all POST operations for Plemmy
+
+    Args:
+        session (requests.Session): open Lemmy session
+        url (str): URL of API call
+        files: files to be uploaded
+
+    Returns:
+        requests.Response: server response for POST operation
+    """
+
+    logger = logging.getLogger(__name__)
+    try:
+        re = session.post(url, files=files, timeout=60)
         logger.debug(f"Code: {re.status_code}")
     except requests.exceptions.RequestException as ex:
         logger.error(f"POST error: {ex}")
