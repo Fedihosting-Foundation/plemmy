@@ -1,10 +1,9 @@
 import logging
 
 import requests
-from typing import List, BinaryIO
-from typing_extensions import Self
+from typing import List
 
-from .types import UploadFile, File
+from .types import File
 from .utils import create_session, post_handler, put_handler, get_handler, \
     create_form, file_handler
 
