@@ -255,7 +255,7 @@ class GetPostsResponse(object):
     def __init__(self, api_response: requests.Response) -> None:
         response = api_response.json()
         self.posts = [PostView(p) for p in response["posts"]]
-        self.next_page = response["next_page"]
+        self.next_page = response.get("next_page")
 
 
 class GetRepliesResponse(object):
